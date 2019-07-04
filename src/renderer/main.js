@@ -1,18 +1,24 @@
+// The Vue build version to load with the `import` command
+// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import axios from 'axios'
-
 import App from './App'
 import router from './router'
 import store from './store'
+import '@/assets/css/index.scss'
 
-if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
-Vue.http = Vue.prototype.$http = axios
+import Components from './components/index'
+
+import Loading from './components/Loading/index'
+Vue.use(Components)
+Vue.use(Loading)
+
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
-  components: { App },
+  el: '#app',
   router,
   store,
+  components: { App },
   template: '<App/>'
-}).$mount('#app')
+})
