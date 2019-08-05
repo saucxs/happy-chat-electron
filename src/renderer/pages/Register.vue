@@ -38,78 +38,78 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-import { checkEmail } from "../utils/common"
+import { mapActions } from 'vuex'
+import { checkEmail } from '../utils/common'
 export default {
-	data() {
-		return {
-			name: '',
-			password: '',
+  data () {
+    return {
+      name: '',
+      password: '',
       email: '',
-			messageBox: {
-				visible: false,
-				message: "", // 弹窗内容
-				hasCancel: true, // 弹窗是否有取消键
-				messageBoxEvent: "" //  弹窗事件名称
-			},
+      messageBox: {
+        visible: false,
+        message: '', // 弹窗内容
+        hasCancel: true, // 弹窗是否有取消键
+        messageBoxEvent: '' //  弹窗事件名称
+      },
       disabledFlag: false
-		}
-	},
-	methods: {
-    ...mapActions(["register", "activateEmail"]),
-	  actualRegister() {
+    }
+  },
+  methods: {
+    ...mapActions(['register', 'activateEmail']),
+	  actualRegister () {
 	    let params = {
 	      name: this.name,
         password: this.password,
         email: this.email
       }
-      if (this.name !== "" && this.password !== "" && this.email !== "" && checkEmail(this.email)) {
+      if (this.name !== '' && this.password !== '' && this.email !== '' && checkEmail(this.email)) {
         this.register(params).then(res => {
           if (res) {
             if (res.success) {
               // 弹窗
               this.messageBox.messageBoxEvent = 'register'
-              this.messageBox.visible = true;
-              this.messageBox.message = res.message || "您已注册成功";
+              this.messageBox.visible = true
+              this.messageBox.message = res.message || '您已注册成功'
             } else {
               this.$message({
                 message: res.message,
-                type: "error"
-              });
+                type: 'error'
+              })
             }
           }
-          this.disabledFlag = false;
+          this.disabledFlag = false
         }).catch(err => {
           console.log(err)
           this.$message({
             message: '服务器出错啦',
-            type: "error"
-          });
-          this.disabledFlag = false;
+            type: 'error'
+          })
+          this.disabledFlag = false
         })
       } else {
-        let message;
-        if (this.name === "") { message = "请输入用户名" }
-        if (this.password === "") { message = "请输入密码" }
-        if (this.email === "") { message = "请输入邮箱" }
-        if (!checkEmail(this.email)) { message = "请输入正确的邮箱" }
+        let message
+        if (this.name === '') { message = '请输入用户名' }
+        if (this.password === '') { message = '请输入密码' }
+        if (this.email === '') { message = '请输入邮箱' }
+        if (!checkEmail(this.email)) { message = '请输入正确的邮箱' }
         this.$message({
           message: message,
-          type: "warn"
-        });
+          type: 'warn'
+        })
       }
     },
-    startRegister() {
-      this.disabledFlag = true;
+    startRegister () {
+      this.disabledFlag = true
       this.actualRegister()
-		},
-		confirm(value) {
-			if (value === 'register') {
-				this.messageBox.visible = false;
-				this.$router.push("/login");
-			}
-		}
-	}
+    },
+    confirm (value) {
+      if (value === 'register') {
+        this.messageBox.visible = false
+        this.$router.push('/login')
+      }
+    }
+  }
 }
 </script>
 

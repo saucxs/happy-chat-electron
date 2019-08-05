@@ -42,86 +42,86 @@
 <script>
 import Header from '../components/Header.vue'
 import Nothing from '../components/Nothing.vue'
-import { mapGetters, mapActions } from 'vuex';
-import axios from "axios"
+import { mapGetters, mapActions } from 'vuex'
+import axios from 'axios'
 export default {
-	components: {
-		Header,
+  components: {
+    Header,
     Nothing
-	},
-	data() {
-		return {
-			chatTitle: "查找中...",
-			userDataList: [],
-			groupDataList: []
-		}
-	},
-	computed: {},
-	watch: {},
-	methods: {
-    ...mapActions(["findPerson","getGroupInformation"]),
-		getChatTitle() {
-			const username = this.$route.params.username;
-			const groupname = this.$route.params.groupname;
-			if (username) {
-				this.findPeople(username)
-			} else if (groupname) {
-				this.findGroup(groupname);
-			}
-		},
-		// 找人
-		findPeople(username) {
+  },
+  data () {
+    return {
+      chatTitle: '查找中...',
+      userDataList: [],
+      groupDataList: []
+    }
+  },
+  computed: {},
+  watch: {},
+  methods: {
+    ...mapActions(['findPerson', 'getGroupInformation']),
+    getChatTitle () {
+      const username = this.$route.params.username
+      const groupname = this.$route.params.groupname
+      if (username) {
+        this.findPeople(username)
+      } else if (groupname) {
+        this.findGroup(groupname)
+      }
+    },
+    // 找人
+    findPeople (username) {
       this.findPerson({ name: username }).then(res => {
-        if(res.success){
-          this.userDataList = res.data.userInfo;
-          this.chatTitle = "查找结果（"+ this.userDataList.length +"人）";
-        }else{
+        if (res.success) {
+          this.userDataList = res.data.userInfo
+          this.chatTitle = '查找结果（' + this.userDataList.length + '人）'
+        } else {
           this.$message({
             message: '服务器出错啦',
-            type: "error"
-          });
+            type: 'error'
+          })
         }
       }).catch(err => {
         console.log('err', err)
         const errorMsg = err.error
         this.$message({
           message: errorMsg,
-          type: "error"
-        });
+          type: 'error'
+        })
       })
-		},
-		// 找群
-		findGroup(groupname) {
+    },
+    // 找群
+    findGroup (groupname) {
       this.getGroupInformation({groupName: groupname}).then(res => {
-        if(res.success){
-          this.groupDataList = res.data.groupInfo;
-          this.chatTitle = "查找结果（"+ this.groupDataList.length +"群）";
-        }else{
+        if (res.success) {
+          this.groupDataList = res.data.groupInfo
+          this.chatTitle = '查找结果（' + this.groupDataList.length + '群）'
+        } else {
           this.$message({
             message: '服务器出错啦',
-            type: "error"
-          });
+            type: 'error'
+          })
         }
       }).catch(err => {
         console.log('err', err)
         const errorMsg = err.error
         this.$message({
           message: errorMsg,
-          type: "error"
-        });
+          type: 'error'
+        })
       })
-		},
-		enterUserCard(val) {
-			this.$router.push(`/user_info/${val}`)
-		},
-		enterGroupCard(val) {
-			this.$router.push(`/group_chat/${val}`)
-		}
-	},
+    },
+    enterUserCard (val) {
+      this.$router.push(`/user_info/${val}`)
+    },
+    enterGroupCard (val) {
+      this.$router.push(`/group_chat/${val}`)
+    }
+  },
 
-	mounted() {
-		this.getChatTitle();
-	}
+  mounted () {
+    this.getChatTitle()
+  }
 }
 </script>
 

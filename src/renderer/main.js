@@ -4,37 +4,37 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
-import "@/assets/css/index.scss"
+import '@/assets/css/index.scss'
 import VueClipboard from 'vue-clipboard2'
 import Components from './components/index'
 import Loading from './components/Loading/index'
 /* 引入全局过滤器 */
 import * as fliterCommon from '../src/utils/common'
-Object.keys(fliterCommon).forEach(key => Vue.filter(key, fliterCommon[key]));
+/* scroll全局置顶scroll */
+import scrollDirective from '../src/utils/scroll'
+Object.keys(fliterCommon).forEach(key => Vue.filter(key, fliterCommon[key]))
 /* 引入全局指令focus */
 Vue.directive('focus', {
   inserted: function (el) {
-    el.focus();
+    el.focus()
   }
 })
-/* scroll全局置顶scroll */
-import scrollDirective from '../src/utils/scroll';
 Vue.directive('scroll', scrollDirective)
 
-Vue.use(Components);
+Vue.use(Components)
 
 Vue.use(Loading)
 
 Vue.use(VueClipboard)
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = false
 
-/*全局PV统计*/
+/* 全局PV统计 */
 router.beforeEach((to, from, next) => {
-  let flag = localStorage.getItem("HappyChatUserInfo") !== null ? true: false;
+  let flag = localStorage.getItem('HappyChatUserInfo') !== null
   let data = {
     type: 'visit',
-    user_id: flag ? JSON.parse(localStorage.getItem("HappyChatUserInfo")).user_id: '获取不到userId',
+    user_id: flag ? JSON.parse(localStorage.getItem('HappyChatUserInfo')).user_id : '获取不到userId',
     time: (new Date()).getTime(),
     params: {
       from: {
@@ -49,7 +49,7 @@ router.beforeEach((to, from, next) => {
       }
     }
   }
-  App.methods.logEvent(data);
+  App.methods.logEvent(data)
   next()
 })
 
@@ -63,10 +63,10 @@ router.beforeEach((to, from, next) => {
 //   // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
 //   return '关闭提示';
 // };
-window.onunload = function unloadPage() {
+window.onunload = function unloadPage () {
   let data = {
     type: 'close',
-    user_id: localStorage.getItem("HappyChatUserInfo") !== null ? JSON.parse(localStorage.getItem("HappyChatUserInfo")).user_id: '获取不到userId',
+    user_id: localStorage.getItem('HappyChatUserInfo') !== null ? JSON.parse(localStorage.getItem('HappyChatUserInfo')).user_id : '获取不到userId',
     time: (new Date()).getTime(),
     params: {
       from: {
@@ -81,7 +81,7 @@ window.onunload = function unloadPage() {
       }
     }
   }
-  App.methods.logEvent(data);
+  App.methods.logEvent(data)
 }
 
 /* eslint-disable no-new */

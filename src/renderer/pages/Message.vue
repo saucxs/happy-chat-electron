@@ -41,40 +41,40 @@
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import Nothing from '../components/Nothing.vue'
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
-	name: 'message',
-	data() {
-		return {
-			currentTab: 1,
+  name: 'message',
+  data () {
+    return {
+      currentTab: 1,
       webSocket: ''
-		}
-	},
-	components: {
-		Header,
-		Footer,
+    }
+  },
+  components: {
+    Header,
+    Footer,
     Nothing
-	},
-	computed: {
-		...mapGetters([
+  },
+  computed: {
+    ...mapGetters([
 		  'firstLoad',
-			'msgListGetter'
-		])
-	},
-	methods: {
-    ...mapActions(["messageList"]),
-		enterChat(chatType, chatId) {
+      'msgListGetter'
+    ])
+  },
+  methods: {
+    ...mapActions(['messageList']),
+    enterChat (chatType, chatId) {
       const path = chatType == 'private' ? `/private_chat/${chatId}` : `/group_chat/${chatId}`
       this.$router.push(path)
-		},
+    },
     //  获取私聊和群的消息
-    getMsgBySocket() {
-      socketWeb.removeAllListeners('getPrivateMsg');
-      socketWeb.removeAllListeners('getGroupMsg');
+    getMsgBySocket () {
+      socketWeb.removeAllListeners('getPrivateMsg')
+      socketWeb.removeAllListeners('getGroupMsg')
       socketWeb.on('getPrivateMsg', (data) => {
-        data.type = 'private';
-        data.name = data.remark?data.remark: data.name;
+        data.type = 'private'
+        data.name = data.remark ? data.remark : data.name
         this.$store.commit('updateListMutation', data)
       })
       socketWeb.on('getGroupMsg', (data) => {
@@ -82,21 +82,21 @@ export default {
         this.$store.commit('updateListMutation', data)
       })
     },
-    onScroll() {
+    onScroll () {
       console.log('置底操作加载新数据的指令输出')
     }
 
-	},
-	created() {
+  },
+  created () {
     if (this.firstLoad) {
-      this.$loading.show();
+      this.$loading.show()
       this.messageList().then(res => {
-        this.$loading.hide();
+        this.$loading.hide()
       })
       this.$store.commit('firstLoadMutation', false)
     }
-    this.getMsgBySocket();
-	}
+    this.getMsgBySocket()
+  }
 }
 </script>
 

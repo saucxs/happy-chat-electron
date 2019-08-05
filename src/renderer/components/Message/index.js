@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Message from './main.vue'
 
-Message.installMessage = function(options) {
+Message.installMessage = function (options) {
   if (options === undefined || options === null) {
     options = {
       message: ''
@@ -19,4 +19,4 @@ Message.installMessage = function(options) {
   document.querySelector('body').appendChild(component.$el)
 }
 
-export default Message;
+export default Message

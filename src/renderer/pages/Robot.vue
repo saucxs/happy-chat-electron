@@ -25,20 +25,20 @@
   import Header from '../components/Header.vue'
   import Footer from '../components/Footer.vue'
   import ChatItem from '../components/ChatItem.vue'
-  import { mapGetters, mapActions } from 'vuex';
-  import  { toNomalTime } from "../utils/common"
+  import { mapGetters, mapActions } from 'vuex'
+import { toNomalTime } from '../utils/common'
   export default {
     name: 'Robot',
     data () {
       return {
         currentTab: 2,
-        inputMsg: "",
+        inputMsg: '',
         time: toNomalTime((new Date()).getTime()),
-        img: "",
+        img: '',
         isScrollToBottom: true,
         name: '',
         href: '',
-        viewBox: '',
+        viewBox: ''
       }
     },
     components: {
@@ -47,32 +47,32 @@
       ChatItem
     },
     methods: {
-      ...mapActions(["chatRobot"]),
-      async sendMessage(val) {
-        this.inputMsg = '';
-        if (val.trim() == '') return;
+      ...mapActions(['chatRobot']),
+      async sendMessage (val) {
+        this.inputMsg = ''
+        if (val.trim() == '') return
         this.$store.commit('robotMsgMutation', { // 提交自己的内容
           message: val
         })
         let data = {
           message: val,
-          userId: this.userInfoDataGetter.user_id,
+          userId: this.userInfoDataGetter.user_id
         }
-        await this.chatRobot(data);
-        this.refresh();
+        await this.chatRobot(data)
+        this.refresh()
       },
-      refresh() {
-        this.viewBox = this.$refs.viewBox;
+      refresh () {
+        this.viewBox = this.$refs.viewBox
         setTimeout(() => {
-          this.viewBox.scrollTop = this.viewBox.scrollHeight;
+          this.viewBox.scrollTop = this.viewBox.scrollHeight
         }, 4)
       }
     },
     watch: {
-      robotMsgGetter() { // 当数据改变了,则自动刷新
-        this.refresh();
-        let message = this.$refs.message;
-        message.focus();
+      robotMsgGetter () { // 当数据改变了,则自动刷新
+        this.refresh()
+        let message = this.$refs.message
+        message.focus()
       }
     },
     computed: {
@@ -81,12 +81,12 @@
         'userInfoDataGetter'
       ])
     },
-    created() {
-      const userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
-      this.img = userInfo.avator;
-      this.name = userInfo.name;
+    created () {
+      const userInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
+      this.img = userInfo.avator
+      this.name = userInfo.name
       this.href = userInfo.user_id
-    },
+    }
   }
 </script>
 

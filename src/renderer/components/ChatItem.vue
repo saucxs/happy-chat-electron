@@ -22,26 +22,26 @@
 
 <script>
     export default {
-        name: 'chat-item',
-        props: ['me', 'name', 'img', 'msg', 'time','href'],
-        components: {},
-        data() {
-            return {};
-        },
+      name: 'chat-item',
+      props: ['me', 'name', 'img', 'msg', 'time', 'href'],
+      components: {},
+      data () {
+        return {}
+    },
 
-        computed: {},
+      computed: {},
 
-        watch: {},
+      watch: {},
 
-        methods: {
-            lookInfo(){
-              if(this.href){
-                this.$router.push(`/user_info/${this.href}`)
-              }else {
-                window.location.href = "https:// github.com/saucxs/happy-chat-web"
-              }
-            }
+      methods: {
+        lookInfo () {
+          if (this.href) {
+            this.$router.push(`/user_info/${this.href}`)
+          } else {
+            window.location.href = 'https:// github.com/saucxs/happy-chat-web'
+          }
         }
+      }
     }
 </script>
 

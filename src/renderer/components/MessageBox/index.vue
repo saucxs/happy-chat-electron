@@ -42,69 +42,69 @@
 
 <script>
 export default {
-	name: 'MessageBox',
-	props: {
-		messageBoxEvent: {
-			type: String
-		},
-		visible: {
-			type: Boolean,
-			default: false
-		},
-		title: {
-			type: String,
-			default: "提示"
-		},
-		// 单行输入
-		canInput: {
-			type: Boolean,
-			default: false
-		},
-		// 编辑个人信息
-		canEditorInfo: {
-			type: Boolean,
-			default: false
-		},
-		hasCancel: {
-			type: Boolean,
-			default: true
-		},
-		myInfo: {
-			type: Object
-		}
-	},
-	components: {},
-	data() {
-		return {
-			canInputText: ""
-		};
-	},
+  name: 'MessageBox',
+  props: {
+    messageBoxEvent: {
+      type: String
+    },
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    title: {
+      type: String,
+      default: '提示'
+    },
+    // 单行输入
+    canInput: {
+      type: Boolean,
+      default: false
+    },
+    // 编辑个人信息
+    canEditorInfo: {
+      type: Boolean,
+      default: false
+    },
+    hasCancel: {
+      type: Boolean,
+      default: true
+    },
+    myInfo: {
+      type: Object
+    }
+  },
+  components: {},
+  data () {
+    return {
+      canInputText: ''
+    }
+  },
 
-	computed: {},
+  computed: {},
 
-	watch: {},
+  watch: {},
 
-	methods: {
-		cancel() {
-			this.$emit("cancel", this.messageBoxEvent);
-		},
-		confirm() {
-			if (this.canInput) {
-				this.$emit("confirm", {
-					messageBoxEvent: this.messageBoxEvent,
-					canInputText: this.canInputText
-				});
-				return
-			} else if (this.canEditorInfo) {
-				this.$emit("confirm", {
-					messageBoxEvent: this.messageBoxEvent,
-					myInfo: JSON.parse(JSON.stringify(this.myInfo))
-				});
-				return
-			}
-			this.$emit("confirm", this.messageBoxEvent);
-		}
-	}
+  methods: {
+    cancel () {
+      this.$emit('cancel', this.messageBoxEvent)
+    },
+    confirm () {
+      if (this.canInput) {
+        this.$emit('confirm', {
+          messageBoxEvent: this.messageBoxEvent,
+          canInputText: this.canInputText
+        })
+        return
+      } else if (this.canEditorInfo) {
+        this.$emit('confirm', {
+          messageBoxEvent: this.messageBoxEvent,
+          myInfo: JSON.parse(JSON.stringify(this.myInfo))
+        })
+        return
+      }
+      this.$emit('confirm', this.messageBoxEvent)
+    }
+  }
 }
 </script>
 

@@ -34,237 +34,236 @@
 <script>
 import Header from '../components/Header.vue'
 import ChatItem from '../components/ChatItem.vue'
-import LoadMore from '../components/LoadMore.vue';
+import LoadMore from '../components/LoadMore.vue'
 import InputArea from '../components/InputArea'
-import {	toNomalTime} from "../utils/common";
-import { mapGetters, mapActions } from 'vuex';
+import {	toNomalTime} from '../utils/common'
+import { mapGetters, mapActions } from 'vuex'
 export default {
-	components: {
-		Header,
-		ChatItem,
+  components: {
+    Header,
+    ChatItem,
     LoadMore,
     InputArea
-	},
+  },
 
-	data() {
-		return {
+  data () {
+    return {
       page: 1,
       pageNum: 20,
       isShowLoading: false,
       isNoMore: false,
-			inputMsg: '',
-			privateDetail: [], // 私聊相关
-			toUserInfo: { // 被私聊者
-				to_user: '',
-				avator: '',
-				sex: '',
-				place: '',
-				status: ''
-			},
-			isMyFriend: false, // 他是否是我的好友
-			isHisFriend: false, // 我是否是他的好友
-			fromUserInfo: {}, // 用户自己
-			btnInfo: "发送",
+      inputMsg: '',
+      privateDetail: [], // 私聊相关
+      toUserInfo: { // 被私聊者
+        to_user: '',
+        avator: '',
+        sex: '',
+        place: '',
+        status: ''
+      },
+      isMyFriend: false, // 他是否是我的好友
+      isHisFriend: false, // 我是否是他的好友
+      fromUserInfo: {}, // 用户自己
+      btnInfo: '发送',
       remarkName: '',
       anotherRemarkName: '',
       type: 'bottom',
       viewBox: '',
       beforeScrollHeight: '',
       afterScrollHeight: '',
-      showEmojiPicker: false,
-		}
-	},
+      showEmojiPicker: false
+    }
+  },
 
-	computed: {
-		...mapGetters([
-			'someOneInfoGetter'
-		])
-	},
+  computed: {
+    ...mapGetters([
+      'someOneInfoGetter'
+    ])
+  },
 
-	watch: {
-		privateDetail() {
-      this.viewBox = this.$refs.viewBox;
-      if(this.type == 'bottom'){
-        this.refresh();
-      }else{
+  watch: {
+    privateDetail () {
+      this.viewBox = this.$refs.viewBox
+      if (this.type == 'bottom') {
+        this.refresh()
+      } else {
         this.nofresh()
       }
-		}
-	},
+    }
+  },
 
-	methods: {
-    ...mapActions(["getPrivateDetail","isFriendJudge","queryUserInfoSpecial","savePrivateMsg"]),
-    /*子组件回传*/
-    showEmojiPickerFunc(val){
-      this.showEmojiPicker = val;
+  methods: {
+    ...mapActions(['getPrivateDetail', 'isFriendJudge', 'queryUserInfoSpecial', 'savePrivateMsg']),
+    /* 子组件回传 */
+    showEmojiPickerFunc (val) {
+      this.showEmojiPicker = val
       this.refresh()
     },
-    sendMessageFunc(val){
-      this.inputMsg = val;
+    sendMessageFunc (val) {
+      this.inputMsg = val
       this.sendMessage()
     },
-		// 获取数据库的消息
-		getPrivateMsg() {
+    // 获取数据库的消息
+    getPrivateMsg () {
       let params = {
         page: this.page,
         pageNum: this.pageNum,
         to_user: this.toUserInfo.to_user
       }
-      this.$loading.show();
+      this.$loading.show()
       this.getPrivateDetail(params).then(res => {
-        this.$loading.hide();
+        this.$loading.hide()
         if (res.success) {
           this.type = 'bottom'
-          this.privateDetail = res.data.privateDetail;
+          this.privateDetail = res.data.privateDetail
           if (this.privateDetail.length == 0 || res.data.privateDetail.length < this.pageNum) {
-            this.isNoMore = true;
+            this.isNoMore = true
           }
           this.privateDetail.forEach(element => {
-            element.time = element.time;
-            element.message = element.message.split(':')[1];
-          });
+            element.time = element.time
+            element.message = element.message.split(':')[1]
+          })
         }
-
       }).catch(err => {
         const errorMsg = err.response.error
         this.$message({
           message: errorMsg,
-          type: "error"
-        });
+          type: 'error'
+        })
       })
-		},
-		// 发送信息
-		sendMessage() {
-			if (this.inputMsg.trim() == '') return
-			if (!this.isMyFriend) {
-				this.$message({
-					message: 'ta不是您的好友，请先加ta为好友',
-					type: "error"
-				});
-				return
-			}
-			if (!this.isHisFriend) {
-				this.$message({
-					message: '您不是ta的好友，请先加ta为好友',
-					type: "error"
-				});
-				return
-			}
+    },
+    // 发送信息
+    sendMessage () {
+      if (this.inputMsg.trim() == '') return
+      if (!this.isMyFriend) {
+        this.$message({
+          message: 'ta不是您的好友，请先加ta为好友',
+          type: 'error'
+        })
+        return
+      }
+      if (!this.isHisFriend) {
+        this.$message({
+          message: '您不是ta的好友，请先加ta为好友',
+          type: 'error'
+        })
+        return
+      }
       this.type = 'bottom'
-			this.sendMsgBySocket();
-			this.saveMsgByDB();
-		},
-		// 用socket发消息
-		sendMsgBySocket() {
-			const data = {
-				from_user: this.fromUserInfo.user_id, // 自己的id
-				to_user: this.toUserInfo.to_user, // 对方id
-				name: this.fromUserInfo.name, // 自己的昵称
+      this.sendMsgBySocket()
+      this.saveMsgByDB()
+    },
+    // 用socket发消息
+    sendMsgBySocket () {
+      const data = {
+        from_user: this.fromUserInfo.user_id, // 自己的id
+        to_user: this.toUserInfo.to_user, // 对方id
+        name: this.fromUserInfo.name, // 自己的昵称
         remark: this.remarkName, // 别人给的备注
-				avator: this.fromUserInfo.avator, // 自己的头像
-				message: this.inputMsg, // 消息内容
-				type: 'private',
-				status: '1', // 是否在线 0为不在线 1为在线
-				time: toNomalTime((new Date()).getTime()), // 时间
-			};
-			//  console.log(this.anotherRemarkName,'remark')
-      data.remark = this.anotherRemarkName;
+        avator: this.fromUserInfo.avator, // 自己的头像
+        message: this.inputMsg, // 消息内容
+        type: 'private',
+        status: '1', // 是否在线 0为不在线 1为在线
+        time: toNomalTime((new Date()).getTime()) // 时间
+      }
+      //  console.log(this.anotherRemarkName,'remark')
+      data.remark = this.anotherRemarkName
       socketWeb.emit('sendPrivateMsg', data)
-			this.$store.commit('updateListMutation', data);
-		},
-		// 用数据库存消息
-		saveMsgByDB() {
-			const data = {
-				from_user: this.fromUserInfo.user_id, // 自己的id
-				to_user: this.toUserInfo.to_user, // 对方的id
-				name: this.fromUserInfo.name, // 自己的昵称
+      this.$store.commit('updateListMutation', data)
+    },
+    // 用数据库存消息
+    saveMsgByDB () {
+      const data = {
+        from_user: this.fromUserInfo.user_id, // 自己的id
+        to_user: this.toUserInfo.to_user, // 对方的id
+        name: this.fromUserInfo.name, // 自己的昵称
         remark: this.remarkName, // 别人给的备注
-				avator: this.fromUserInfo.avator, // 自己的头像
-				message: this.inputMsg, // 消息内容
-				status: '1', // 是否在线 0为不在线 1为在线
-				time: toNomalTime((new Date()).getTime()), // 时间
-			}
-			//  存此条私聊信息到数据库
-      this.savePrivateMsg(data)	.then(res => {
-        if(res){
-          this.inputMsg = '';
+        avator: this.fromUserInfo.avator, // 自己的头像
+        message: this.inputMsg, // 消息内容
+        status: '1', // 是否在线 0为不在线 1为在线
+        time: toNomalTime((new Date()).getTime()) // 时间
+      }
+      //  存此条私聊信息到数据库
+      this.savePrivateMsg(data).then(res => {
+        if (res) {
+          this.inputMsg = ''
           //  存此条私聊信息到本地
-          this.privateDetail.push(data);
+          this.privateDetail.push(data)
         }
       }).catch(err => {
         const errorMsg = err.response.error
         this.$message({
           message: errorMsg,
-          type: "error"
-        });
+          type: 'error'
+        })
       })
-		},
-		//  获取socket消息
-		getMsgBySocket() {
-      socketWeb.removeAllListeners('getPrivateMsg');
+    },
+    //  获取socket消息
+    getMsgBySocket () {
+      socketWeb.removeAllListeners('getPrivateMsg')
       socketWeb.on('getPrivateMsg', (data) => {
-				// 如果收到的soket信息不是发给自己的 放弃这条soket 没必要了 因为私聊是点对点发送的
-				//  if(data.to_user != this.fromUserInfo.user_id) return
-				// 如果收到的soket信息不是来自当前聊天者 写入首页信息列表 并return
-				//  console.log(data.from_user, '!=', this.toUserInfo.to_user)
-				//  	// soket信息不是来自当前聊天者 vuex添加此条信息 有未读提示
-				if (data.from_user != this.toUserInfo.to_user) {
-					data.chatOfNow = false;
-					this.$store.commit('updateListMutation', data)
-					return
-				} else {
-					// soket信息来自当前聊天者 vuex添加此条信息 没未读提示
-					data.chatOfNow = true;
-					this.$store.commit('updateListMutation', data)
-				}
-				// 本地添加此条信息
-				this.privateDetail.push(data);
-			})
-		},
-		//  查询此用户与我的关系
-		isFriend() {
+        // 如果收到的soket信息不是发给自己的 放弃这条soket 没必要了 因为私聊是点对点发送的
+        //  if(data.to_user != this.fromUserInfo.user_id) return
+        // 如果收到的soket信息不是来自当前聊天者 写入首页信息列表 并return
+        //  console.log(data.from_user, '!=', this.toUserInfo.to_user)
+        //  	// soket信息不是来自当前聊天者 vuex添加此条信息 有未读提示
+        if (data.from_user != this.toUserInfo.to_user) {
+          data.chatOfNow = false
+          this.$store.commit('updateListMutation', data)
+          return
+        } else {
+          // soket信息来自当前聊天者 vuex添加此条信息 没未读提示
+          data.chatOfNow = true
+          this.$store.commit('updateListMutation', data)
+        }
+        // 本地添加此条信息
+        this.privateDetail.push(data)
+      })
+    },
+    //  查询此用户与我的关系
+    isFriend () {
       let params = {
         other_user_id: this.toUserInfo.to_user
       }
       this.isFriendJudge(params).then(res => {
         if (res) {
-          this.isMyFriend = res.data.isMyFriend.length !== 0 ? true : false;
-          this.isHisFriend = res.data.isHisFriend.length !== 0 ? true : false;
-          if(res.data.isHisFriend.length > 0 && res.data.isMyFriend.length > 0){
-            this.remarkName = res.data.isMyFriend[0].remark;
-            this.anotherRemarkName = res.data.isHisFriend[0].remark;
+          this.isMyFriend = res.data.isMyFriend.length !== 0
+          this.isHisFriend = res.data.isHisFriend.length !== 0
+          if (res.data.isHisFriend.length > 0 && res.data.isMyFriend.length > 0) {
+            this.remarkName = res.data.isMyFriend[0].remark
+            this.anotherRemarkName = res.data.isHisFriend[0].remark
           }
         }
       }).catch(err => {
         const errorMsg = err.response.error
         this.$message({
           message: errorMsg,
-          type: "error"
-        });
+          type: 'error'
+        })
       })
-		},
-		// 将未读信息归零
-		resetUnred() {
-			this.$store.commit('resetUnredMutation', this.toUserInfo.to_user)
-		},
-		//  消息置底
-    refresh() {
+    },
+    // 将未读信息归零
+    resetUnred () {
+      this.$store.commit('resetUnredMutation', this.toUserInfo.to_user)
+    },
+    //  消息置底
+    refresh () {
       setTimeout(() => {
         this.viewBox.scrollTop = this.viewBox.scrollHeight
       }, 100)
     },
-    nofresh() {
+    nofresh () {
       setTimeout(() => {
-        this.afterScrollHeight = this.viewBox.scrollHeight - this.beforeScrollHeight;
-        this.viewBox.scrollTop = this.afterScrollHeight;
+        this.afterScrollHeight = this.viewBox.scrollHeight - this.beforeScrollHeight
+        this.viewBox.scrollTop = this.afterScrollHeight
       }, 100)
     },
-    loadMore() {
-      console.log('加載更多');
-      this.beforeScrollHeight = this.viewBox.scrollHeight;
+    loadMore () {
+      console.log('加載更多')
+      this.beforeScrollHeight = this.viewBox.scrollHeight
       if (!this.isNoMore) {
-        this.isShowLoading = true;
-        this.page = this.page + 1;
+        this.isShowLoading = true
+        this.page = this.page + 1
         let params = {
           page: this.page,
           pageNum: this.pageNum,
@@ -274,28 +273,28 @@ export default {
           if (res.success) {
             this.type = 'unBottom'
             if (res.data.privateDetail.length < this.pageNum) {
-              this.isNoMore = true;
+              this.isNoMore = true
             }
             res.data.privateDetail.forEach(element => {
-              element.time = element.time;
-              element.message = element.message.split(':')[1];
-            });
-            this.privateDetail.unshift(...res.data.privateDetail);
-            this.isShowLoading = false;
+              element.time = element.time
+              element.message = element.message.split(':')[1]
+            })
+            this.privateDetail.unshift(...res.data.privateDetail)
+            this.isShowLoading = false
           }
         })
       }
     }
-	},
-	created() {
-		this.toUserInfo.to_user = this.$route.params.user_id;
-		this.fromUserInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
-		this.isFriend();
-		this.resetUnred();
-		this.getPrivateMsg();
-		this.getMsgBySocket();
-		this.queryUserInfoSpecial({user_id: this.toUserInfo.to_user})
-	}
+  },
+  created () {
+    this.toUserInfo.to_user = this.$route.params.user_id
+    this.fromUserInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
+    this.isFriend()
+    this.resetUnred()
+    this.getPrivateMsg()
+    this.getMsgBySocket()
+    this.queryUserInfoSpecial({user_id: this.toUserInfo.to_user})
+  }
 }
 </script>
 

@@ -28,39 +28,39 @@
 
 <script>
 import Header from '../components/Header.vue'
-import axios from "axios"
+import axios from 'axios'
 export default {
-	components: {
-		Header
-	},
+  components: {
+    Header
+  },
 
-	data() {
-		return {
-			chatTitle: "加人,进群,建群",
-			inputContent: ""
-		}
-	},
+  data () {
+    return {
+      chatTitle: '加人,进群,建群',
+      inputContent: ''
+    }
+  },
 
-	computed: {},
+  computed: {},
 
-	watch: {},
+  watch: {},
 
-	methods: {
-		findPeople() {
-			const path = `/add_seach/user/${this.inputContent}`
-			this.$router.push(path)
-		},
-		findGroup() {
-			const path = `/add_seach/group/${this.inputContent}`
-			this.$router.push(path)
-		},
-		createGroup() {
-			const path = `/creat_group`
-			this.$router.push(path)
-		}
-	},
+  methods: {
+    findPeople () {
+      const path = `/add_seach/user/${this.inputContent}`
+      this.$router.push(path)
+    },
+    findGroup () {
+      const path = `/add_seach/group/${this.inputContent}`
+      this.$router.push(path)
+    },
+    createGroup () {
+      const path = `/creat_group`
+      this.$router.push(path)
+    }
+  },
 
-	mounted() {}
+  mounted () {}
 }
 </script>
 

@@ -29,139 +29,139 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions } from 'vuex'
 export default {
-	data() {
-		return {
-			groupInfo: {}, // 群资料
-			userInfo: {}, // 本机用户资料,
+  data () {
+    return {
+      groupInfo: {}, // 群资料
+      userInfo: {}, // 本机用户资料,
       shareGroupUrl: window.location,
       ownerFlag: false
-		}
-	},
+    }
+  },
   props: {
     groupMembers: Array,
     groupInfoGetter: Object,
     isMyGroup: Boolean
   },
-	computed: {},
-	methods: {
-    ...mapActions(["getGroupInformation", "judgeIsInGroup", "addGroupChatRelation", "exitChatGroup"]),
-    /*去编辑群*/
-    goEditGroup() {
+  computed: {},
+  methods: {
+    ...mapActions(['getGroupInformation', 'judgeIsInGroup', 'addGroupChatRelation', 'exitChatGroup']),
+    /* 去编辑群 */
+    goEditGroup () {
       this.$router.push({
         path: `/edit_group/` + this.$route.params.group_id
-      });
+      })
     },
-		// 获取群资料
-		getGroupInfo() {
+    // 获取群资料
+    getGroupInfo () {
       let params = {
         groupId: this.$route.params.group_id
       }
       this.getGroupInformation(params).then(res => {
-        if(res.success){
-          this.groupInfo = res.data.groupInfo[0];
-        }else{
+        if (res.success) {
+          this.groupInfo = res.data.groupInfo[0]
+        } else {
           this.$message({
             message: '服务器出错啦',
-            type: "error"
-          });
+            type: 'error'
+          })
         }
       }).catch(err => {
         console.log('err', err)
         const errorMsg = err.error
         this.$message({
           message: errorMsg,
-          type: "error"
-        });
+          type: 'error'
+        })
       })
-		},
-		exitGroup() {
+    },
+    exitGroup () {
       let params = {
         user_id: this.userInfo.user_id,
         group_id: this.$route.params.group_id
       }
       this.exitChatGroup(params).then((res) => {
         const data = {
-          action: "delete",
+          action: 'delete',
           id: this.$route.params.group_id
         }
-        if(res.success){
+        if (res.success) {
           this.$store.commit('updateListMutation', data)
-          this.$router.push('/message');
-        }else{
+          this.$router.push('/message')
+        } else {
           this.$message({
             message: '服务器出错啦',
-            type: "error"
-          });
+            type: 'error'
+          })
         }
       }).catch(err => {
         console.log('err', err)
         const errorMsg = err.error
         this.$message({
           message: errorMsg,
-          type: "error"
-        });
+          type: 'error'
+        })
       })
-		},
-		goChat() {
-      this.addGroupUserRelation();
-		},
+    },
+    goChat () {
+      this.addGroupUserRelation()
+    },
     //  把新成员加入群名单
-    addGroupUserRelation() {
+    addGroupUserRelation () {
       let params = {
-        groupId: this.groupInfoGetter.group_id,
+        groupId: this.groupInfoGetter.group_id
       }
       this.addGroupChatRelation(params).then(res => {
-        if(res.success){
-          this.getChatMsg();
+        if (res.success) {
+          this.getChatMsg()
           const data = {
-            action: "push",
-            message: "您已成功加入此群！",
+            action: 'push',
+            message: '您已成功加入此群！',
             group_avator: this.groupInfoGetter.group_avator,
             group_name: this.groupInfoGetter.group_name,
             time: this.groupInfoGetter.creater_time,
             group_id: this.groupInfoGetter.group_id,
-            type: "group",
+            type: 'group',
             id: this.groupInfoGetter.group_id
           }
-          this.$store.commit('updateListMutation', data);
-          this.isMyGroup = true;
-        }else{
+          this.$store.commit('updateListMutation', data)
+          this.isMyGroup = true
+        } else {
           this.$message({
             message: res.message,
-            type: "warn"
-          });
+            type: 'warn'
+          })
         }
       })
     },
-    goInfo(item) {
+    goInfo (item) {
       const path = `/user_info/${item.user_id}`
       this.$router.push(path)
     },
-    copyGroupUrl(){
+    copyGroupUrl () {
       let thatMessage = this.$message
       this.$copyText(this.shareGroupUrl).then(function (e) {
         thatMessage({
           message: '复制成功',
-          type: "success"
-        });
+          type: 'success'
+        })
       }, function (e) {
         thatMessage({
           message: '复制失败',
-          type: "error"
-        });
+          type: 'error'
+        })
       })
-    },
-	},
-	async created() {
-		this.userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
-		//  await this.isInGroup();
-		//  this.getGroupInfo();
-    if(this.groupInfoGetter.group_creater == this.userInfo.name){
+    }
+  },
+  async created () {
+    this.userInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
+    //  await this.isInGroup();
+    //  this.getGroupInfo();
+    if (this.groupInfoGetter.group_creater == this.userInfo.name) {
       this.ownerFlag = true
     }
-	}
+  }
 }
 </script>
 

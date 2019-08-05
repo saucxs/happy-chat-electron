@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import Loading from './LoadSpecial.vue';
+import Loading from './LoadSpecial.vue'
 export default {
   components: {
     Loading
@@ -26,10 +26,10 @@ export default {
   },
   methods: {
     loadMore: function () {
-      this.$emit('load-more');
+      this.$emit('load-more')
     }
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>

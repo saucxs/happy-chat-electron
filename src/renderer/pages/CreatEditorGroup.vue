@@ -31,26 +31,26 @@
 
 <script>
   import Header from '../components/Header.vue'
-  import { mapActions } from 'vuex';
-  import { toNomalTime } from "../utils/common";
+  import { mapActions } from 'vuex'
+import { toNomalTime } from '../utils/common'
 
-  export default {
-    data() {
+export default {
+    data () {
       return {
         userInfo: {},
         groupInfo: {
-          group_name: "",
-          group_notice: "",
-          group_avator: "#icongroup",
-          group_creater: "",
-          creater_time: "",
+          group_name: '',
+          group_notice: '',
+          group_avator: '#icongroup',
+          group_creater: '',
+          creater_time: '',
           update_time: ''
         },
-        group_id: "",
+        group_id: '',
         messageBox: {
           visible: false,
-          message: "", // 弹窗内容
-          messageBoxEvent: "" // 弹窗事件名称
+          message: '', // 弹窗内容
+          messageBoxEvent: '' // 弹窗事件名称
         },
         editGroupId: this.$route.params.group_id
       }
@@ -61,117 +61,117 @@
     },
     methods: {
       ...mapActions([
-        "confirmCreateGroup",
-        "confirmJoinGroup",
-        "confirmEditGroup",
-        "getGroupInformation"
+        'confirmCreateGroup',
+        'confirmJoinGroup',
+        'confirmEditGroup',
+        'getGroupInformation'
       ]),
       // 创建群
-      createGroup() {
-        this.groupInfo.creater_time = toNomalTime((new Date()).getTime()); // 时间
-        this.groupInfo.group_creater = this.userInfo.name;
+      createGroup () {
+        this.groupInfo.creater_time = toNomalTime((new Date()).getTime()) // 时间
+        this.groupInfo.group_creater = this.userInfo.name
         if (this.groupInfo.group_name && this.groupInfo.group_notice) {
           this.confirmCreateGroup(this.groupInfo).then((res) => {
             if (res.success) {
-              this.group_id = res.data.group_id;
+              this.group_id = res.data.group_id
               const data = {
-                message: "创建群成功！",
+                message: '创建群成功！',
                 time: this.groupInfo.creater_time,
                 group_name: this.groupInfo.group_name,
                 group_avator: this.groupInfo.group_avator,
-                type: "group",
-                action: "push",
+                type: 'group',
+                action: 'push',
                 id: this.group_id,
                 group_id: this.group_id
               }
               this.$store.commit('updateListMutation', data)
-              this.joinGroup();
+              this.joinGroup()
             } else {
               this.$message({
                 message: '服务器出错啦',
-                type: "error"
-              });
+                type: 'error'
+              })
             }
           }).catch(err => {
             const errorMsg = err.response.error
             this.$message({
               message: errorMsg,
-              type: "error"
-            });
+              type: 'error'
+            })
           })
         } else {
-          let message;
-          if (this.groupInfo.group_name.trim() === "") { message = "请输入群名" }
-          if (this.this.groupInfo.group_notice.trim() === "") { message = "请输入群公告" }
+          let message
+          if (this.groupInfo.group_name.trim() === '') { message = '请输入群名' }
+          if (this.this.groupInfo.group_notice.trim() === '') { message = '请输入群公告' }
           this.$message({
             message: message,
-            type: "warn"
-          });
+            type: 'warn'
+          })
         }
       },
       // 编辑群资料
-      editGroup() {
-        this.groupInfo.update_time = toNomalTime((new Date()).getTime()); // 时间
+      editGroup () {
+        this.groupInfo.update_time = toNomalTime((new Date()).getTime()) // 时间
         if (this.groupInfo.group_name && this.groupInfo.group_notice) {
-          this.groupInfo.editGroupId = this.editGroupId;
+          this.groupInfo.editGroupId = this.editGroupId
           this.confirmEditGroup(this.groupInfo).then(res => {
-            if (res.success){
+            if (res.success) {
               this.messageBox.messageBoxEvent = 'updateGroup'
-              this.messageBox.visible = true;
-              this.messageBox.message = "修改群成功"
+              this.messageBox.visible = true
+              this.messageBox.message = '修改群成功'
             }
           })
         } else {
-          let message;
-          if (this.groupInfo.group_name.trim() === "") { message = "请输入群名" }
-          if (this.this.groupInfo.group_notice.trim() === "") { message = "请输入群公告" }
+          let message
+          if (this.groupInfo.group_name.trim() === '') { message = '请输入群名' }
+          if (this.this.groupInfo.group_notice.trim() === '') { message = '请输入群公告' }
           this.$message({
             message: message,
-            type: "warn"
-          });
+            type: 'warn'
+          })
         }
       },
       // 把自己加进这个群中
-      joinGroup() {
+      joinGroup () {
         this.confirmJoinGroup({
           group_id: this.group_id
         }).then((res) => {
           if (res.success) {
             this.messageBox.messageBoxEvent = 'createGroup'
-            this.messageBox.visible = true;
-            this.messageBox.message = "创建群成功"
+            this.messageBox.visible = true
+            this.messageBox.message = '创建群成功'
           } else {
             this.$message({
               message: '服务器出错啦',
-              type: "error"
-            });
+              type: 'error'
+            })
           }
         }).catch(err => {
           const errorMsg = err.response.error
           this.$message({
             message: errorMsg,
-            type: "error"
-          });
+            type: 'error'
+          })
         })
       },
-      confirm(value) {
+      confirm (value) {
         if (value === 'createGroup') {
           this.$router.push({
             path: `/message`
-          });
-        } else if (value === 'updateGroup'){
+          })
+        } else if (value === 'updateGroup') {
           this.$router.push({
             path: `/group_chat/` + this.editGroupId
-          });
+          })
         }
       }
     },
-    created() {
-      this.userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
+    created () {
+      this.userInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
       if (this.editGroupId) {
         this.getGroupInformation({groupId: this.editGroupId}).then(res => {
-          if (res.success){
-            this.groupInfo = res.data.groupInfo[0];
+          if (res.success) {
+            this.groupInfo = res.data.groupInfo[0]
           }
         })
       }

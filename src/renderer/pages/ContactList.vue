@@ -56,72 +56,72 @@
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 import Nothing from '../components/Nothing.vue'
-import axios from "axios"
-import { mapGetters, mapActions } from 'vuex';
+import axios from 'axios'
+import { mapGetters, mapActions } from 'vuex'
 export default {
-	components: {
-		Header,
-		Footer,
+  components: {
+    Header,
+    Footer,
     Nothing
-	},
+  },
 
-	data() {
-		return {
-			currentTab: 3,
-			friend: "hover",
-			group: "",
+  data () {
+    return {
+      currentTab: 3,
+      friend: 'hover',
+      group: '',
       alreadyFriends: ['1'],
       alreadyGroups: ['1']
-		}
-	},
+    }
+  },
 
-	computed: {},
+  computed: {},
 
-	watch: {},
+  watch: {},
 
-	methods: {
-    ...mapActions(["getAlreadyFriends", "getAlreadyGroups"]),
-    enterIt(val,type) {
-      if(type === 'friend'){
+  methods: {
+    ...mapActions(['getAlreadyFriends', 'getAlreadyGroups']),
+    enterIt (val, type) {
+      if (type === 'friend') {
         this.$router.push(`/user_info/${val}`)
-      }else if(type === 'group'){
+      } else if (type === 'group') {
         this.$router.push(`/group_info/${val}`)
       }
     },
-		showFriends() {
-			this.friend = "hover";
-			this.group = '';
-		},
-		showGroups() {
-			this.friend = '';
-			this.group = "hover";
-		},
+    showFriends () {
+      this.friend = 'hover'
+      this.group = ''
+    },
+    showGroups () {
+      this.friend = ''
+      this.group = 'hover'
+    },
     newFriendList () {
       this.$router.push({path: 'contact_list/new_friends'})
     },
-    alreadyFriendsList(){
-      this.$loading.show();
+    alreadyFriendsList () {
+      this.$loading.show()
       this.getAlreadyFriends({user_id: this.userInfo.user_id}).then(res => {
         if (res) {
-          this.$loading.hide();
-          this.alreadyFriends =  res.data.alreadyFriends
+          this.$loading.hide()
+          this.alreadyFriends = res.data.alreadyFriends
         }
       })
     },
     alreadyGroupsList () {
       this.getAlreadyGroups({user_id: this.userInfo.user_id}).then(res => {
         if (res) {
-          this.alreadyGroups =  res.data.alreadyGroups
+          this.alreadyGroups = res.data.alreadyGroups
         }
       })
     }
 
-	},
+  },
 
-	mounted() {
-    this.userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
-    Promise.all([this.alreadyFriendsList(),this.alreadyGroupsList()]);
-	}
+  mounted () {
+    this.userInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
+    Promise.all([this.alreadyFriendsList(), this.alreadyGroupsList()])
+  }
 }
 </script>
 

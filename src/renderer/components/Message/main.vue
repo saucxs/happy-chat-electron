@@ -20,26 +20,26 @@
 
 <script type="text/javascript">
 export default {
-	name: 'Message',
-	data() {
-		return {
-			message: '',
-			type: "success",
-			time: 3500,
-			isShow: true
-		}
-	},
-	mounted() {
-		this.close()
-	},
-	methods: {
-		close() {
-			var that = this
-			window.setTimeout(function() {
-				that.isShow = false
-			}, this.time);
-		}
-	}
+  name: 'Message',
+  data () {
+    return {
+      message: '',
+      type: 'success',
+      time: 3500,
+      isShow: true
+    }
+  },
+  mounted () {
+    this.close()
+  },
+  methods: {
+    close () {
+      var that = this
+      window.setTimeout(function () {
+        that.isShow = false
+      }, this.time)
+    }
+  }
 }
 </script>
 

@@ -19,17 +19,17 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from 'vuex'
 export default {
-	name: "activate",
-	props: {},
-	components: {},
-	data() {
-		return {
-			code: this.$route.params.code,
+  name: 'activate',
+  props: {},
+  components: {},
+  data () {
+    return {
+      code: this.$route.params.code,
       message: ''
-		};
-	},
+    }
+  },
   //  beforeRouteEnter: (to, from, next) => {
   //    next(vm => {
   //      let data = {
@@ -47,31 +47,31 @@ export default {
   //      })
   //    });
   //  },
-  created() {
-	  this.activateEmailFunction();
+  created () {
+	  this.activateEmailFunction()
   },
-	methods: {
-    ...mapActions(["activateEmail"]),
+  methods: {
+    ...mapActions(['activateEmail']),
     goBackLogin () {
       this.$router.push('/login')
     },
-    activateEmailFunction() {
+    activateEmailFunction () {
       let data = {
         code: this.code
       }
       this.activateEmail(data).then(res => {
         if (res) {
-          this.message = res.message;
+          this.message = res.message
         }
       }).catch(err => {
         this.$message({
           message: err || '服务器出错啦',
-          type: "error"
-        });
+          type: 'error'
+        })
       })
     }
-	}
-};
+  }
+}
 </script>
 
 <style lang="scss" scoped>

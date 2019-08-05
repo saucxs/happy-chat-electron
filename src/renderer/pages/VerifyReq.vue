@@ -20,45 +20,45 @@
 
 <script>
 import Header from '../components/Header.vue'
-import { mapActions } from 'vuex';
-import { toNomalTime } from "../utils/common"
+import { mapActions } from 'vuex'
+import { toNomalTime } from '../utils/common'
 export default {
-	components: {
-		Header
-	},
-	data() {
-		return {
-			textAreaContent: "您好，我想加您为好友",
-			messageBox: {
-				visible: false,
-				message: "", // 弹窗内容
-				hasCancel: true, // 弹窗是否有取消键
-				messageBoxEvent: "" // 弹窗事件名称
-			},
-			fromUserInfo: {}
-		}
-	},
-	computed: {
-		//  ...mapGetters([
-		//      'addAsFriendGetter'
-		//  ])
-	},
+  components: {
+    Header
+  },
+  data () {
+    return {
+      textAreaContent: '您好，我想加您为好友',
+      messageBox: {
+        visible: false,
+        message: '', // 弹窗内容
+        hasCancel: true, // 弹窗是否有取消键
+        messageBoxEvent: '' // 弹窗事件名称
+      },
+      fromUserInfo: {}
+    }
+  },
+  computed: {
+    //  ...mapGetters([
+    //      'addAsFriendGetter'
+    //  ])
+  },
 
-	watch: {},
+  watch: {},
 
-	methods: {
-    ...mapActions(["insertNewFriends"]),
-		send() {
+  methods: {
+    ...mapActions(['insertNewFriends']),
+    send () {
       socketWeb.emit('sendRequest', {
-				from_user: this.fromUserInfo.user_id,
-				to_user: this.$route.params.user_id, // 对方id
-				name: this.fromUserInfo.name,
-				avator: this.fromUserInfo.avator,
-				sex: this.fromUserInfo.sex,
-				content: this.textAreaContent,
-				time: toNomalTime((new Date()).getTime()) // 时间
-			})
-			// db持久化储存
+        from_user: this.fromUserInfo.user_id,
+        to_user: this.$route.params.user_id, // 对方id
+        name: this.fromUserInfo.name,
+        avator: this.fromUserInfo.avator,
+        sex: this.fromUserInfo.sex,
+        content: this.textAreaContent,
+        time: toNomalTime((new Date()).getTime()) // 时间
+      })
+      // db持久化储存
       let params = {
         to_user: this.$route.params.user_id, // 对方id
         content: this.textAreaContent,
@@ -68,25 +68,25 @@ export default {
       this.insertNewFriends(params).then(res => {
         if (res) {
           this.messageBox.messageBoxEvent = 'send'
-          this.messageBox.visible = true;
-          this.messageBox.message = "发送成功，等候回复哦"
+          this.messageBox.visible = true
+          this.messageBox.message = '发送成功，等候回复哦'
         }
       })
-		},
-		confirm(value) {
-			if (value === 'send') {
-				const path = `/message`
-				this.$router.push(path)
-			}
-		},
-		cancel(value) {
-			this.messageBox.visible = false;
-		}
-	},
+    },
+    confirm (value) {
+      if (value === 'send') {
+        const path = `/message`
+        this.$router.push(path)
+      }
+    },
+    cancel (value) {
+      this.messageBox.visible = false
+    }
+  },
 
-	mounted() {
-		this.fromUserInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
-	}
+  mounted () {
+    this.fromUserInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
+  }
 }
 </script>
 

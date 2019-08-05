@@ -18,44 +18,44 @@
 
 <script>
 export default {
-	name: 'Header',
-	props: ['currentTab', 'chatTitle', 'goback', 'groupInfo', 'userInfo'],
-	data() {
-		return {}
-	},
-	computed: {
-		title() {
-			if (this.currentTab === 1) {
-				return '消息'
-			} else if (this.currentTab === 2) {
-				return '机器人'
-			} else if (this.currentTab === 3) {
-				return '通讯录'
-			} else if (this.currentTab === 4) {
-				return '我'
-			} else {
-				return this.chatTitle
-			}
-		}
-	},
-	methods: {
-		add() {
-			this.$router.push("/add");
-		},
-		lookGroupInfo() {
+  name: 'Header',
+  props: ['currentTab', 'chatTitle', 'goback', 'groupInfo', 'userInfo'],
+  data () {
+    return {}
+  },
+  computed: {
+    title () {
+      if (this.currentTab === 1) {
+        return '消息'
+      } else if (this.currentTab === 2) {
+        return '机器人'
+      } else if (this.currentTab === 3) {
+        return '通讯录'
+      } else if (this.currentTab === 4) {
+        return '我'
+      } else {
+        return this.chatTitle
+      }
+    }
+  },
+  methods: {
+    add () {
+      this.$router.push('/add')
+    },
+    lookGroupInfo () {
 		  //  this.showGroupInfo = true;
-		  this.$emit('showGroupInfo',true)
-			//  const path = `/group_info/${this.$route.params.group_id}`;
-			//  this.$router.push(path);
-		},
-		lookUserInfo() {
-			const path = `/user_info/${this.$route.params.user_id}`;
-			this.$router.push(path);
-		},
-		goBack() {
-			this.$router.back();
-		}
-	}
+		  this.$emit('showGroupInfo', true)
+      //  const path = `/group_info/${this.$route.params.group_id}`;
+      //  this.$router.push(path);
+    },
+    lookUserInfo () {
+      const path = `/user_info/${this.$route.params.user_id}`
+      this.$router.push(path)
+    },
+    goBack () {
+      this.$router.back()
+    }
+  }
 }
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->

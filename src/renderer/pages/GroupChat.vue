@@ -26,12 +26,12 @@
 <script>
   import Header from '../components/Header.vue'
   import ChatItem from '../components/ChatItem.vue'
-  import LoadMore from '../components/LoadMore.vue';
-  import GroupInfo from  './GroupInfo'
+  import LoadMore from '../components/LoadMore.vue'
+import GroupInfo from './GroupInfo'
   import InputArea from '../components/InputArea'
-  import {	toNomalTime } from "../utils/common";
-  import { mapGetters, mapActions } from 'vuex';
-  export default {
+  import {	toNomalTime } from '../utils/common'
+import { mapGetters, mapActions } from 'vuex'
+export default {
     components: {
       Header,
       ChatItem,
@@ -39,7 +39,7 @@
       GroupInfo,
       InputArea
     },
-    data() {
+    data () {
       return {
         page: 1,
         pageNum: 20,
@@ -56,7 +56,7 @@
         //  btnInfo: "发送",
         type: 'bottom',
         showGroupInfoDialog: false,
-        groupMembers: [],  // 群成员信息列表,
+        groupMembers: [], // 群成员信息列表,
         isMyGroup: null,
         viewBox: '',
         beforeScrollHeight: '',
@@ -74,50 +74,50 @@
     },
 
     watch: {
-      message() {
-        this.viewBox = this.$refs.viewBox;
+      message () {
+        this.viewBox = this.$refs.viewBox
         if (this.type == 'bottom') {
-          this.refresh();
+          this.refresh()
         } else {
           this.nofresh()
         }
-      },
-//     viewBoxHeight(val){
-//       this.viewBoxHeight = val;
-//       console.log(this.viewBoxHeight, '-=-=-=-=-=')
-//     }
+      }
+    //     viewBoxHeight(val){
+    //       this.viewBoxHeight = val;
+    //       console.log(this.viewBoxHeight, '-=-=-=-=-=')
+    //     }
     },
     methods: {
-      ...mapActions(["getGroupChat", "saveGroupChatMsg", "addGroupChatRelation", "judgeIsInGroup"]),
-      /*子组件回传*/
-      showEmojiPickerFunc(val) {
-        this.showEmojiPicker = val;
-        this.$nextTick(()=>{
-          this.viewBoxHeight = this.$refs.viewBox.clientHeight;
+      ...mapActions(['getGroupChat', 'saveGroupChatMsg', 'addGroupChatRelation', 'judgeIsInGroup']),
+      /* 子组件回传 */
+      showEmojiPickerFunc (val) {
+        this.showEmojiPicker = val
+        this.$nextTick(() => {
+          this.viewBoxHeight = this.$refs.viewBox.clientHeight
           // console.log(this.viewBoxHeight, '-=-=-=-=-=')
-          this.keyWordHeight = document.body.clientHeight - this.viewBoxHeight - 176;
-          // console.log(this.keyWordHeight, '键盘高度')
+          this.keyWordHeight = document.body.clientHeight - this.viewBoxHeight - 176
+        // console.log(this.keyWordHeight, '键盘高度')
         })
         this.refresh()
       },
-      sendMessageFunc(val) {
-        this.inputMsg = val;
-        this.sendMessage();
+      sendMessageFunc (val) {
+        this.inputMsg = val
+        this.sendMessage()
       },
       // 获取聊天记录
-      getChatMsg() {
+      getChatMsg () {
         let params = {
           page: this.page,
           pageNum: this.pageNum,
           groupId: this.groupInfo.groupId
         }
-        this.$loading.show();
+        this.$loading.show()
         this.getGroupChat(params).then((res) => {
-          this.$loading.hide();
-          if ( res.success ) {
+          this.$loading.hide()
+          if (res.success) {
             this.type = 'bottom'
-            this.message = res.data.groupMsg;
-            this.groupMembers = res.data.groupMemberInfo;
+            this.message = res.data.groupMsg
+            this.groupMembers = res.data.groupMemberInfo
             this.$store.commit('groupInfoMutation', res.data.groupInfo[0])
             this.$store.commit('groupMemberMutation', res.data.groupMember)
             //  群成员不存在此用户id，则添加
@@ -135,24 +135,24 @@
             //    }
             //    this.$store.commit('updateListMutation', data)
             //  }
-            if ( this.message.length == 0 || this.message.length < this.pageNum ) {
+            if (this.message.length == 0 || this.message.length < this.pageNum) {
               this.isNoMore = true
             };
             this.message.forEach(element => {
-              element.time = element.time;
-              element.message = element.message.split(':')[1];
-            });
+              element.time = element.time
+              element.message = element.message.split(':')[1]
+            })
           } else {
             this.$message({
               message: '服务器出错啦',
-              type: "error"
-            });
+              type: 'error'
+            })
           }
         })
       },
       // 发送信息
-      async sendMessage() {
-        if ( this.inputMsg.trim() == '' ) return
+      async sendMessage () {
+        if (this.inputMsg.trim() == '') return
         let data = {
           groupId: this.groupInfo.groupId, // 群id
           group_name: this.groupInfoGetter.group_name, // 群名称
@@ -164,12 +164,12 @@
           message: this.inputMsg, // 消息内容
           time: toNomalTime(new Date().getTime()) // 时间
         }
-        this.type = 'bottom';
-        socketWeb.emit('sendGroupMsg', data);
-        this.saveMsgByDB();
+        this.type = 'bottom'
+        socketWeb.emit('sendGroupMsg', data)
+        this.saveMsgByDB()
       },
       // 保存此条信息到数据库
-      saveMsgByDB() {
+      saveMsgByDB () {
         let params = {
           groupId: this.groupInfo.groupId,
           message: this.inputMsg,
@@ -177,92 +177,91 @@
           time: toNomalTime((new Date()).getTime())
         }
         this.saveGroupChatMsg(params).then((res) => {
-          if ( res.success ) {
-            this.inputMsg = '';
+          if (res.success) {
+            this.inputMsg = ''
           } else {
             this.$message({
               message: '服务器出错啦',
-              type: "error"
-            });
+              type: 'error'
+            })
           }
         })
       },
       //  把新成员加入群名单
-      addGroupUserRelation() {
+      addGroupUserRelation () {
         let params = {
           groupId: this.groupInfo.groupId
         }
         this.addGroupChatRelation(params).then(res => {
-          if ( res.success ){
-            this.getChatMsg();
+          if (res.success) {
+            this.getChatMsg()
             const data = {
-              action: "push",
-              message: "您已成功加入此群！",
+              action: 'push',
+              message: '您已成功加入此群！',
               group_avator: this.groupInfoGetter.group_avator,
               group_name: this.groupInfoGetter.group_name,
               time: this.groupInfoGetter.creater_time,
               group_id: this.groupInfoGetter.group_id,
-              type: "group",
+              type: 'group',
               id: this.groupInfoGetter.group_id
             }
-            this.$store.commit('updateListMutation', data);
-            this.isMyGroup = true;
+            this.$store.commit('updateListMutation', data)
+            this.isMyGroup = true
           } else {
             this.$message({
               message: res.message || '服务器出错啦',
-              type: "warn"
-            });
+              type: 'warn'
+            })
           }
         })
       },
       //  获取socket消息
-      getMsgBySocket() {
-        socketWeb.removeAllListeners('getGroupMsg');
+      getMsgBySocket () {
+        socketWeb.removeAllListeners('getGroupMsg')
         socketWeb.on('getGroupMsg', (data) => {
-          // 收到soket群信息 如果该群群成员不包含自己 放弃这条soket
-          if (!this.groupMemberGetter.includes(this.userInfo.user_id)) return;
+        // 收到soket群信息 如果该群群成员不包含自己 放弃这条soket
+          if (!this.groupMemberGetter.includes(this.userInfo.user_id)) return
           // 如果收到的soket信息不是来自当前聊天群 写入首页信息列表 并return
-          data.type = 'group';
-          if ( data.groupId != this.groupInfo.groupId ) {
+          data.type = 'group'
+          if (data.groupId != this.groupInfo.groupId) {
             this.$store.commit('updateListMutation', data)
-            return
           } else {
-            // soket信息来自当前聊天群 vuex添加此条信息
-            data.chatOfNow = true;
+          // soket信息来自当前聊天群 vuex添加此条信息
+            data.chatOfNow = true
             this.$store.commit('updateListMutation', data)
             // 本地添加此条信息
-            this.message.push(data);
+            this.message.push(data)
           }
         })
       },
       // 将未读信息归零
-      resetUnred() {
+      resetUnred () {
         this.$store.commit('resetUnredMutation', this.groupInfo.groupId)
       },
       //  消息置底
-      refresh() {
+      refresh () {
         setTimeout(() => {
           this.viewBox.scrollTop = this.viewBox.scrollHeight
         }, 4)
       },
       //  消息保持不变
-      nofresh() {
+      nofresh () {
         setTimeout(() => {
-          this.afterScrollHeight = this.viewBox.scrollHeight - this.beforeScrollHeight;
-          this.viewBox.scrollTop = this.afterScrollHeight;
+          this.afterScrollHeight = this.viewBox.scrollHeight - this.beforeScrollHeight
+          this.viewBox.scrollTop = this.afterScrollHeight
         }, 4)
       },
-      loadMore() {
-        if ( !this.isMyGroup ) {
+      loadMore () {
+        if (!this.isMyGroup) {
           this.$message({
             message: '请先加入群聊',
-            type: "warn"
-          });
+            type: 'warn'
+          })
         } else {
-          this.beforeScrollHeight = this.viewBox.scrollHeight;
-          if ( !this.isNoMore ) {
-            this.isShowLoading = true;
-            this.page = this.page + 1;
+          this.beforeScrollHeight = this.viewBox.scrollHeight
+          if (!this.isNoMore) {
+            this.isShowLoading = true
+            this.page = this.page + 1
             let params = {
               page: this.page,
               pageNum: this.pageNum,
@@ -270,65 +269,65 @@
             }
             this.getGroupChat(params).then((res) => {
               if (res.success) {
-                this.type = 'unBottom';
-                if ( res.data.groupMsg.length < this.pageNum ) {
-                  this.isNoMore = true;
+                this.type = 'unBottom'
+                if (res.data.groupMsg.length < this.pageNum) {
+                  this.isNoMore = true
                 }
                 res.data.groupMsg.forEach(element => {
-                  element.time = element.time;
-                  element.message = element.message.split(':')[1];
-                });
-                if ( res.data.groupMsg.length == 0 ) return ;
-                this.message.unshift(...res.data.groupMsg);
-                this.isShowLoading = false;
+                  element.time = element.time
+                  element.message = element.message.split(':')[1]
+                })
+                if (res.data.groupMsg.length == 0) return
+                this.message.unshift(...res.data.groupMsg)
+                this.isShowLoading = false
               }
             })
           }
         }
       },
-      showGroupInfoChild(val) {
-        this.showGroupInfoDialog = val;
+      showGroupInfoChild (val) {
+        this.showGroupInfoDialog = val
       },
       // 看该用户是否在某个群中(根据返回的数组长度是不是为零
-      isInGroup() {
+      isInGroup () {
         let params = {
           group_id: this.$route.params.group_id
         }
         this.judgeIsInGroup(params).then((res) => {
-          if ( res.success ) {
-            this.isMyGroup = res.data.group_user.length === 0 ? false : true;
+          if (res.success) {
+            this.isMyGroup = res.data.group_user.length !== 0
           } else {
             this.$message({
               message: '服务器出错啦',
-              type: "error"
-            });
+              type: 'error'
+            })
           }
         })
       },
-      goChat() {
-        this.addGroupUserRelation();
+      goChat () {
+        this.addGroupUserRelation()
       },
-      handleScroll() {
-        this.viewBox = this.$refs.viewBox;
+      handleScroll () {
+        this.viewBox = this.$refs.viewBox
       },
-      handleOnresize() {
-        this.viewBox = this.$refs.viewBox;
+      handleOnresize () {
+        this.viewBox = this.$refs.viewBox
         // console.log(this.viewBox.clientHeight, '聊天页高度')
-        this.viewHeight = this.viewBox.clientHeight;
+        this.viewHeight = this.viewBox.clientHeight
       }
     },
-    async created() {
-      this.groupInfo.groupId = this.$route.params.group_id;
-      this.userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
-      await this.isInGroup();
-      await this.getChatMsg();
-      this.resetUnred();
-      this.getMsgBySocket();
-    },
+    async created () {
+      this.groupInfo.groupId = this.$route.params.group_id
+      this.userInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
+      await this.isInGroup()
+      await this.getChatMsg()
+      this.resetUnred()
+      this.getMsgBySocket()
+  },
     mounted: function () {
       //  window.addEventListener('scroll', this.handleScroll, true);  //  监听（绑定）滚轮滚动事件
-      this.viewBoxHeight = this.$refs.viewBox.clientHeight;
-    },
+      this.viewBoxHeight = this.$refs.viewBox.clientHeight
+  }
   }
 </script>
 
