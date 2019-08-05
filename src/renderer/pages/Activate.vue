@@ -10,66 +10,68 @@
         </svg>
 			</div>
       <p class="message-tip">{{message}}</p>
-      <p class="go-back-login" @click="goBackLogin">返回登录</p>
+      <div class="action">
+        <span @click="goBackLogin" class="primary-span">返回登录</span>
+      </div>
 		</div>
 	</div>
 </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex';
 export default {
-  name: 'activate',
-  props: {},
-  components: {},
-  data () {
-    return {
-      code: this.$route.params.code,
+	name: "activate",
+	props: {},
+	components: {},
+	data() {
+		return {
+			code: this.$route.params.code,
       message: ''
-    }
+		};
+	},
+  //  beforeRouteEnter: (to, from, next) => {
+  //    next(vm => {
+  //      let data = {
+  //        code: vm.code
+  //      }
+  //      vm.activateEmail(data).then(res => {
+  //        if (res) {
+  //          vm.message = res.message;
+  //        }
+  //      }).catch(err => {
+  //        this.$message({
+  //          message: '服务器出错啦',
+  //          type: "error"
+  //        });
+  //      })
+  //    });
+  //  },
+  created() {
+	  this.activateEmailFunction();
   },
-  // beforeRouteEnter: (to, from, next) => {
-  //   next(vm => {
-  //     let data = {
-  //       code: vm.code
-  //     }
-  //     vm.activateEmail(data).then(res => {
-  //       if (res) {
-  //         vm.message = res.message;
-  //       }
-  //     }).catch(err => {
-  //       this.$message({
-  //         message: '服务器出错啦',
-  //         type: "error"
-  //       });
-  //     })
-  //   });
-  // },
-  created () {
-	  this.activateEmailFunction()
-  },
-  methods: {
-    ...mapActions(['activateEmail']),
+	methods: {
+    ...mapActions(["activateEmail"]),
     goBackLogin () {
       this.$router.push('/login')
     },
-    activateEmailFunction () {
+    activateEmailFunction() {
       let data = {
         code: this.code
       }
       this.activateEmail(data).then(res => {
         if (res) {
-          this.message = res.message
+          this.message = res.message;
         }
       }).catch(err => {
         this.$message({
-          message: '服务器出错啦',
-          type: 'error'
-        })
+          message: err || '服务器出错啦',
+          type: "error"
+        });
       })
     }
-  }
-}
+	}
+};
 </script>
 
 <style lang="scss" scoped>

@@ -16,8 +16,8 @@
 				<span>性别:</span>
 				<select v-model="myInfo.sex">
 			   <option class="option" disabled value="">性别</option>
-			   <option calss="option">男</option>
-			   <option class="option">女</option>
+			   <option class="option" value="1">男</option>
+			   <option class="option" value="0">女</option>
 			 </select>
 			</div>
 			<div class="">
@@ -41,75 +41,70 @@
 </template>
 
 <script>
-import {
-  mapGetters
-} from 'vuex'
 export default {
-  name: 'MessageBox',
-  props: {
-    messageBoxEvent: {
-      type: String
-    },
-    visible: {
-      type: Boolean,
-      default: false
-    },
-    title: {
-      type: String,
-      default: '提示'
-    },
-    // 单行输入
-    canInput: {
-      type: Boolean,
-      default: false
-    },
-    // 编辑个人信息
-    canEditorInfo: {
-      type: Boolean,
-      default: false
-    },
-    hasCancel: {
-      type: Boolean,
-      default: true
-    },
-    myInfo: {
-      type: Object
-    }
-  },
-  components: {},
-  data () {
-    return {
-      canInputText: ''
-    }
-  },
+	name: 'MessageBox',
+	props: {
+		messageBoxEvent: {
+			type: String
+		},
+		visible: {
+			type: Boolean,
+			default: false
+		},
+		title: {
+			type: String,
+			default: "提示"
+		},
+		// 单行输入
+		canInput: {
+			type: Boolean,
+			default: false
+		},
+		// 编辑个人信息
+		canEditorInfo: {
+			type: Boolean,
+			default: false
+		},
+		hasCancel: {
+			type: Boolean,
+			default: true
+		},
+		myInfo: {
+			type: Object
+		}
+	},
+	components: {},
+	data() {
+		return {
+			canInputText: ""
+		};
+	},
 
-  computed: {},
+	computed: {},
 
-  watch: {},
+	watch: {},
 
-  methods: {
-    cancel () {
-      this.$emit('cancel', this.messageBoxEvent)
-    },
-    confirm () {
-      if (this.canInput) {
-        this.$emit('confirm', {
-          messageBoxEvent: this.messageBoxEvent,
-          canInputText: this.canInputText
-        })
-        return
-      } else if (this.canEditorInfo) {
-        console.log('myInfo', this.myInfo)
-        this.myInfo.sex = this.myInfo.sex === '男' ? 0 : 1
-        this.$emit('confirm', {
-          messageBoxEvent: this.messageBoxEvent,
-          myInfo: this.myInfo
-        })
-        return
-      }
-      this.$emit('confirm', this.messageBoxEvent)
-    }
-  }
+	methods: {
+		cancel() {
+			this.$emit("cancel", this.messageBoxEvent);
+		},
+		confirm() {
+			if (this.canInput) {
+				this.$emit("confirm", {
+					messageBoxEvent: this.messageBoxEvent,
+					canInputText: this.canInputText
+				});
+				return
+			} else if (this.canEditorInfo) {
+				this.$emit("confirm", {
+					messageBoxEvent: this.messageBoxEvent,
+					myInfo: JSON.parse(JSON.stringify(this.myInfo))
+				});
+				return
+			}
+			this.$emit("confirm", this.messageBoxEvent);
+		}
+	}
 }
 </script>
 
@@ -131,13 +126,13 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
     -moz-transform: translate(-50%, -50%);
-    //Mozilla内核浏览器：firefox3.5+
-    -webkit-transform: translate(-50%, -50%); //Webkit内核浏览器：Safari and Chrome
+    // Mozilla内核浏览器：firefox3.5+
+    -webkit-transform: translate(-50%, -50%); // Webkit内核浏览器：Safari and Chrome
     -o-transform: translate(-50%, -50%);
-    //Opera
+    // Opera
     -ms-transform: translate(-50%, -50%);
-    //IE9
-    width: 80%;
+    // IE9
+    width: 70%;
     height: auto;
     background-color: white;
     border-radius: 0.1rem;
@@ -161,7 +156,7 @@ export default {
         margin: 0.16rem 0.01rem 0.2rem;
     }
     p {
-        font-size: 0.18rem;
+        font-size: 0.24rem;
         color: rgba(0, 0, 0, 0.808);
         margin-bottom: 0.18rem;
     }
@@ -175,7 +170,7 @@ export default {
         display: none;
     }
     input {
-        // display: inline-block;
+        //  display: inline-block;
         /*去除点击出现轮廓颜色*/
         width: 66%;
         outline: none;
@@ -190,13 +185,13 @@ export default {
         /*padding已在重置样式中去除，如果没有去除，记得有padding哦*/
     }
     .hasCancel {
-        height: 1rem;
+        height: 0.8rem;
         p {
             background: transparent;
             color: #1678E5;
             font-size: 0.28rem;
-            height: 1rem;
-            line-height: 1rem;
+            height: 0.8rem;
+            line-height: 0.8rem;
             width: 50%;
             position: absolute;
         }
@@ -221,13 +216,13 @@ export default {
         }
     }
     .noCancel {
-        height: 0.6rem;
+        height: 0.8rem;
         p {
             background: transparent;
             color: #1678E5;
-            height: 0.6rem;
-            font-size: 0.14rem;
-            line-height: 0.6rem;
+            height: 0.8rem;
+            font-size: 0.24rem;
+            line-height: 0.8rem;
             width: 100%;
             position: absolute;
             text-decoration: none;

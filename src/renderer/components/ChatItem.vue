@@ -22,26 +22,26 @@
 
 <script>
     export default {
-      name: 'chat-item',
-      props: ['me', 'name', 'img', 'msg', 'time', 'href'],
-      components: {},
-      data () {
-        return {}
-    },
+        name: 'chat-item',
+        props: ['me', 'name', 'img', 'msg', 'time','href'],
+        components: {},
+        data() {
+            return {};
+        },
 
-      computed: {},
+        computed: {},
 
-      watch: {},
+        watch: {},
 
-      methods: {
-        lookInfo () {
-          if (this.href) {
-            this.$router.push(`/user_info/${this.href}`)
-          } else {
-            window.location.href = 'https://github.com/saucxs/happy-chat-web'
-          }
+        methods: {
+            lookInfo(){
+              if(this.href){
+                this.$router.push(`/user_info/${this.href}`)
+              }else {
+                window.location.href = "https:// github.com/saucxs/happy-chat-web"
+              }
+            }
         }
-      }
     }
 </script>
 
@@ -78,13 +78,15 @@
             .msg {
                 float: left;
                 max-width: 60%;
-                // margin-top: 0.2rem;
+                //  margin-top: 0.2rem;
                 margin-left: 1rem;
                 padding: 0.12rem;
                 border-radius: 0.1rem;
-                font-size: 0.24rem;
-                line-height: 0.34rem;
+                font-size: 0.28rem;
+                line-height: 0.46rem;
                 background-color: #fff;
+                word-break: break-all;
+                letter-spacing: 1px;
             }
         }
         .mychat {
@@ -119,10 +121,12 @@
                 margin-right: 1rem;
                 padding: 0.12rem;
                 border-radius: 0.1rem;
-                font-size: 0.24rem;
-                line-height: 0.34rem;
+                font-size: 0.28rem;
+                line-height: 0.46rem;
                 background-color: #4290F7;
                 color: #fff;
+                word-break: break-all;
+              letter-spacing: 1px;
             }
         }
     }

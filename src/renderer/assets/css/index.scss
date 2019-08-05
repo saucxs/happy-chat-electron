@@ -2,7 +2,7 @@
 *,
 *:after,
 *:before {
-  //max-height: 100000px;
+  // max-height: 100000px;
 }
 
 * {
@@ -49,14 +49,27 @@ html {
   width: 100%;
   position: relative;
   .chat-wrapper{
-    height: calc(100% - 1.8rem);
+    height: calc(100% - 2rem) !important;
     width: 100%;
     position: relative;
   }
   .chat-wrapper-spe{
-    height: calc(100% - 2rem);
+    height: calc(100% - 2rem) !important;
     width: 100%;
     position: relative;
+  }
+  .chat-wrapper-contract-list{
+    height: calc(100% - 3.9rem);
+    width: 100%;
+    position: relative;
+  }
+  .chat-wrapper-no-footer{
+    height: calc(100% - 1rem);
+    width: 100%;
+    position: relative;
+  }
+  .chat-wrapper-emoji{
+    height: calc(100% - 5.6rem) !important;
   }
   .secret-box{
     height: 100%;
@@ -68,7 +81,7 @@ html {
   }
   .secret-box-spe{
     height: 100%;
-    //padding: 0px 0px 20px 0;
+    // padding: 0px 0px 20px 0;
     display: flex;
     flex-direction: column;
     list-style: none;
@@ -76,7 +89,7 @@ html {
   }
 
   ul {
-    padding-bottom: 10px;
+    padding-bottom: 0.1rem;
     display: flex;
     flex-direction: column;
     list-style: none;
@@ -86,36 +99,46 @@ html {
       list-style-type: none;
     }
   }
-
   .input-msg {
-    height: 0.76rem;
+    height: 1rem;
+    margin-top: 0.1rem;
     position: fixed;
     bottom: 0rem;
     display: flex;
+    justify-content: center;
+    align-items: center;
     width: 100%;
     z-index: 999;
-    textarea {
-      width: 80%;
-      padding: 0.05rem 0.1rem;
-      border-radius: 0.02rem;
-      outline: none;
-      resize: none;
-      border: none;
-      overflow-y: hidden;
-      font: 0.24rem 'Microsoft Yahei';
+    border-top: 0.5px solid $base-gray-color;
+    border-bottom: 0.5px solid $base-gray-color;
+    background: $base-gray-color;
+    .input-box{
+      width: 70%;
+      height: 100%;
+      display: flex;
+      textarea {
+        width: 100%;
+        margin: 0.1rem 0;
+        border-radius: 0.04rem;
+        padding: 0.08rem 0.12rem;
+        outline: none;
+        resize: none;
+        border: none;
+        overflow-y: hidden;
+        font: 0.3rem 'Microsoft Yahei';
+      }
     }
-
-    p.btn {
+       p.btn {
       font-size:0.22rem;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
-      height: 100%;
+      height: 79.8%;
       width: 20%;
       background: #ccc;
       color: white;
-      border-radius: 0.02rem;
+      border-radius: 0.04rem;
       cursor: not-allowed;
       font-family: 'Microsoft Yahei';
 
@@ -125,54 +148,94 @@ html {
       }
     }
   }
+
+  .input-msg-select{
+    bottom: 3.5rem !important;
+  }
 }
 
+/*不可用*/
+.disabled{
+  pointer-events: none;
+}
 
 /*按钮样式*/
+.box-button-group{
+  margin: 0.1rem;
+  display: flex;
+  .join-group-spe{
+    position: relative;
+    margin: 0.04rem 0;
+  }
+}
 .button {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-}
-.base-button{
-  background-color: #66b3ef;
-  border: none;
-  color: white;
-  padding: 10px 40px;
-  text-align: center;
-  border-radius: 4px 4px 4px 4px;
+  font-size: 0.24rem;
+  width: 50%;
+  border-radius: 0.4rem;
   display: inline-block;
   cursor: pointer;
+  text-align: center;
+}
+
+.button-spe {
+  font-size: 0.24rem;
+  width: 50%;
+  border-radius: 0.4rem;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+
+.base-button{
+  background-color: $base-success-color;
+  color: white;
+  margin: 0.1rem;
+  padding: 0.16rem 0;
+
 }
 
 .warning-button{
-  background-color: #E16762;
-  border: none;
+  background-color: $base-warning-color;
   color: white;
-  padding: 0.26rem 0.5rem;;
-  text-align: center;
-  border-radius: 4px 4px 4px 4px;
-  display: inline-block;
-  cursor: pointer;
+  margin: 0.1rem;
+  padding: 0.14rem 0;
+}
+.join-group{
+  bottom: 0.1rem;
 }
 
+
 /*action 按钮*/
+.action-box{
+  margin: 0.4rem 0;
+}
+.action-box-spe{
+  margin: 0.6rem 0;
+}
+
 .action {
   text-align: center;
+  display: flex;
+  justify-content: center;
   span {
     display: inline-block;
-    font-size: 0.3rem;
-    line-height: 0.26rem;
-    padding: 0.26rem 0;
-    width: 40%;
+    font-size: 0.24rem;
+    // line-height: 0.26rem;
+    padding: 0.2rem 0;
+    width: 50%;
+    border-radius: 0.4rem;
     cursor: pointer;
+    margin: 0.2rem;
   }
   .whole-span{
     width: 100%;
     line-height: inherit;
   }
   .warning-span {
-    background-color: #E16762;
+    background-color: $base-warning-color;
     color: #fff;
   }
   .primary-span {
@@ -183,11 +246,19 @@ html {
 
 /*空页面布局*/
 .no-content{
-  display: flex;
-  justify-content: center;
-  align-content: center;
   color: $base-color;
-  margin-top: calc(50vh - 2rem);
+  height: 3.6rem;
+  text-align: center;
+  margin-top: calc(50vh - 3.6rem);
+  .icon{
+    font-size: 2rem;
+  }
+}
+.no-content-spe{
+  color: $base-color;
+  height: 3.6rem;
+  text-align: center;
+  margin-top: calc(50vh - 3.6rem);
   .icon{
     font-size: 2rem;
   }
@@ -217,4 +288,47 @@ html {
       font-size: 0.22rem;
     }
   }
+}
+
+
+/*emoji*/
+.emoji-mart{
+  font-size: 0.24rem !important;
+}
+.emoji-mart-emoji span{
+  width: 0.5rem !important;
+  height: 0.5rem !important;
+}
+.emoji-mart-preview{
+  height: 0.8rem !important;
+  display: none;
+}
+.emoji-mart .emoji-mart-emoji{
+  padding: 0.06rem !important;
+}
+.emoji-mart-category-label span{
+  padding: 0 !important;
+}
+.emoji-mart-anchors svg{
+  max-height: 1rem !important;
+  width: 0.4rem !important;
+  height: 0.4rem !important;
+}
+.emoji-mart-search{
+  margin-top: 0.1rem !important;
+  padding: 0 0.1rem !important;
+  display: none;
+}
+.emoji-mart-search input{
+  padding: 0.1rem 0.2rem !important;
+  font-size: 0.32rem !important;
+}
+.emoji-select{
+  width: 100% !important;
+  position: fixed;
+  height: 3.5rem !important;
+  bottom: 0;
+}
+.emoji-mart-anchor-selected .emoji-mart-anchor-bar{
+  height: 0.04rem !important;
 }

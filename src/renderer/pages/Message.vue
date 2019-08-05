@@ -4,35 +4,34 @@
 	<Header :currentTab="currentTab"></Header>
   <div class="chat-wrapper-spe">
     <div class="secret-box-spe" v-if="msgListGetter.length > 0">
-      <ul>
-        <li v-for="data in msgListGetter" @click="enterChat(data.type,data.id)">
-          <a v-if="data.type === 'group'" href="">
-            <!--<img v-if="data.group_avator" :src="data.group_avator" alt="" class="img">-->
-            <svg class="icon img" aria-hidden="true">
-              <use xlink:href="#iconniu"></use>
-            </svg>
-            <span class="group-unread" v-if="data.unread">{{data.unread}}</span>
-          </a>
-          <a v-if="data.type === 'private'" href="">
-            <!--<img v-if="data.avator" :src="data.avator" alt="" class="img">-->
-            <svg class="icon img" aria-hidden="true">
-              <use xlink:href="#iconniu"></use>
-            </svg>
-            <span class="private-unread" v-if="data.unread">{{data.unread}}</span>
-          </a>
-          <div class="content">
-            <div v-if="data.type === 'group'" class="title">{{data.group_name}}<span>{{data.time}}</span></div>
-            <div v-if="data.type === 'private'" class="title">{{data.remark?data.remark: data.name}}<span>{{data.time}}</span></div>
-            <div class="message">{{data.message}}</div>
+      <ul v-scroll = "onScroll">
+        <li v-for="data in msgListGetter">
+          <div class="list-box" @click="enterChat(data.type,data.id)">
+            <a v-if="data.type === 'group'" href="">
+              <!--<img v-if="data.group_avator" :src="data.group_avator" alt="" class="img">-->
+              <svg class="icon img" aria-hidden="true">
+                <use xlink:href="#iconniu"></use>
+              </svg>
+              <span class="group-unread" v-if="data.unread">{{data.unread}}</span>
+            </a>
+            <a v-if="data.type === 'private'" href="">
+              <!--<img v-if="data.avator" :src="data.avator" alt="" class="img">-->
+              <svg class="icon img" aria-hidden="true">
+                <use xlink:href="#iconniu"></use>
+              </svg>
+              <span class="private-unread" v-if="data.unread">{{data.unread}}</span>
+            </a>
+            <div class="content">
+              <div v-if="data.type === 'group'" class="title">{{data.group_name}}<span>{{data.time}}</span></div>
+              <div v-if="data.type === 'private'" class="title">{{data.remark?data.remark: data.name}}<span>{{data.time}}</span></div>
+              <div class="message" v-if="data.message">{{data.message | dotdot(32) }}</div>
+              <div class="message message-no" v-else>暂无消息~</div>
+            </div>
           </div>
         </li>
       </ul>
     </div>
-    <div class="no-content" v-else>
-      <svg class="icon img" aria-hidden="true">
-        <use xlink:href="#iconkong"></use>
-      </svg>
-    </div>
+    <Nothing v-else :name="'加好友'" :type="'addAuthor'"></Nothing>
   </div>
 	<Footer :currentTab="currentTab"></Footer>
 </div>
@@ -41,73 +40,85 @@
 <script>
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
-import { mapGetters, mapActions } from 'vuex'
+import Nothing from '../components/Nothing.vue'
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
-  name: 'message',
-  data () {
-    return {
-      currentTab: 1,
+	name: 'message',
+	data() {
+		return {
+			currentTab: 1,
       webSocket: ''
-    }
-  },
-  components: {
-    Header,
-    Footer
-  },
-  computed: {
-    ...mapGetters([
+		}
+	},
+	components: {
+		Header,
+		Footer,
+    Nothing
+	},
+	computed: {
+		...mapGetters([
 		  'firstLoad',
-      'msgListGetter'
-    ])
-  },
-  methods: {
-    ...mapActions(['messageList']),
-    enterChat (chatType, chatId) {
+			'msgListGetter'
+		])
+	},
+	methods: {
+    ...mapActions(["messageList"]),
+		enterChat(chatType, chatId) {
       const path = chatType == 'private' ? `/private_chat/${chatId}` : `/group_chat/${chatId}`
       this.$router.push(path)
-    },
-    // 获取私聊和群的消息
-    getMsgBySocket () {
-      socketWeb.removeAllListeners('getPrivateMsg')
-      socketWeb.removeAllListeners('getGroupMsg')
+		},
+    //  获取私聊和群的消息
+    getMsgBySocket() {
+      socketWeb.removeAllListeners('getPrivateMsg');
+      socketWeb.removeAllListeners('getGroupMsg');
       socketWeb.on('getPrivateMsg', (data) => {
-        data.type = 'private'
-        data.name = data.remark ? data.remark : data.name
+        data.type = 'private';
+        data.name = data.remark?data.remark: data.name;
         this.$store.commit('updateListMutation', data)
       })
       socketWeb.on('getGroupMsg', (data) => {
         data.type = 'group'
         this.$store.commit('updateListMutation', data)
       })
+    },
+    onScroll() {
+      console.log('置底操作加载新数据的指令输出')
     }
 
-  },
-  created () {
+	},
+	created() {
     if (this.firstLoad) {
-      this.$loading.show()
+      this.$loading.show();
       this.messageList().then(res => {
-        this.$loading.hide()
+        this.$loading.hide();
       })
       this.$store.commit('firstLoadMutation', false)
     }
-    this.getMsgBySocket()
-  }
+    this.getMsgBySocket();
+	}
 }
 </script>
 
 <style lang="scss" scoped>
+  @import "../assets/css/chat.scss";
 .wrapper {
     ul {
         background-color: #fff;
+        .list-box{
+          padding: 0.24rem 0.15rem;
+          display: flex;
+          justify-items: center;
+          align-items: center;
+          border-bottom: 1px solid $base-gray-color-1;
+        }
         li {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            align-items: center;
-            margin: 0 0.2rem;
-            list-style-type: none;
+          cursor: pointer;
+          background-color: #fff;
+          list-style-type: none;
+          position: relative;
             a {
-                position: relative;
+              display: inherit;
                 .img {
                     width: 0.8rem;
                     height: 0.8rem;
@@ -130,36 +141,38 @@ export default {
                     background-color: red;
                 }
                 .group-unread {
-                    background-color: #98d1f2;
+                    background-color: red;
                 }
             }
             .content {
                 display: inline-block;
                 margin-left: 0.2rem;
                 max-width: 80%;
+                width: 80%;
                 .title {
                     font-size: 0.32rem;
+                    position: relative;
+                    display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 0.05rem;
                     span {
                         font-size: 0.2rem;
-                        color: #676767;
-                        position: absolute;
-                        right: 0.5rem;
+                        color: $gray-color-light;
                     }
                 }
                 .message {
-                    color: #676767;
+                    color: #cccccc;
                     font-size: 0.24rem;
-                    max-height: 0.72rem;
                     overflow: hidden;
                     position: relative;
                 }
-                .message :after {
-                    content: "...";
-                    position: absolute;
-                    bottom: 0;
-                    right: 0;
+                .message-no {
+                  color: #cccccc;
                 }
             }
+        }
+        li:last-child{
+          border-bottom: none;
         }
     }
 }

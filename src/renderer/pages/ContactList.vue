@@ -6,11 +6,15 @@
 		<svg class="icon img" aria-hidden="true"> <use  xlink:href="#iconfriends"></use></svg><span>新朋友</span>
 		<svg class="icon enter" aria-hidden="true"> <use  xlink:href="#iconright"></use></svg>
 	</div>
-	<p class="tab"><span :class="friend" @click="showFriends">朋友</span><span :class="group" @click="showGroups">群组</span></p>
-  <div class="chat-wrapper">
+	<p class="tab">
+    <span :class="friend" @click="showFriends">朋友</span>
+    <span :class="group" @click="showGroups">群组</span>
+  </p>
+  <div class="chat-wrapper-contract-list">
     <div class="secret-box">
       <ul v-if="friend">
-        <li v-for="(data, index) in alreadyFriends">
+        <Nothing v-if="alreadyFriends.length === 0" :name="'加群'" :type="'addGroup'"></Nothing>
+        <li v-else v-for="(data, index) in alreadyFriends">
           <div class="list-box" @click="enterIt(data.other_user_id,'friend')">
             <img :src="data.avator" alt="">
             <div class="content">
@@ -26,18 +30,22 @@
           </div>
         </li>
       </ul>
+
       <ul v-if="group">
-        <li v-for="(data, index) in alreadyGroups">
+        <Nothing v-if="alreadyGroups.length === 0" :name="'加好友'" :type="'addAuthor'"></Nothing>
+        <li v-else v-for="(data, index) in alreadyGroups">
           <div class="list-box" @click="enterIt(data.group_id,'group')">
             <img :src="data.avator" alt="">
             <div class="content">
               <p>{{data.group_name}}</p>
               <p>群主：{{data.group_creater}}</p>
             </div>
-            <div class="remark">{{data.group_notice === ''? '没有留下公告~': data.group_notice.slice(0,10)+'...'}}</div>
+            <div class="remark" v-if="data.group_notice === ''">没有留下公告~</div>
+            <div class="remark" v-else>{{data.group_notice | dotdot(16) }}</div>
           </div>
         </li>
       </ul>
+
     </div>
   </div>
 	<Footer :currentTab="currentTab"></Footer>
@@ -47,74 +55,78 @@
 <script>
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
-import axios from 'axios'
-import { mapGetters, mapActions } from 'vuex'
+import Nothing from '../components/Nothing.vue'
+import axios from "axios"
+import { mapGetters, mapActions } from 'vuex';
 export default {
-  components: {
-    Header,
-    Footer
-  },
+	components: {
+		Header,
+		Footer,
+    Nothing
+	},
 
-  data () {
-    return {
-      currentTab: 3,
-      friend: 'hover',
-      group: '',
-      alreadyFriends: [],
-      alreadyGroups: []
-    }
-  },
+	data() {
+		return {
+			currentTab: 3,
+			friend: "hover",
+			group: "",
+      alreadyFriends: ['1'],
+      alreadyGroups: ['1']
+		}
+	},
 
-  computed: {},
+	computed: {},
 
-  watch: {},
+	watch: {},
 
-  methods: {
-    ...mapActions(['getAlreadyFriends', 'getAlreadyGroups']),
-    enterIt (val, type) {
-      if (type === 'friend') {
+	methods: {
+    ...mapActions(["getAlreadyFriends", "getAlreadyGroups"]),
+    enterIt(val,type) {
+      if(type === 'friend'){
         this.$router.push(`/user_info/${val}`)
-      } else if (type === 'group') {
+      }else if(type === 'group'){
         this.$router.push(`/group_info/${val}`)
       }
     },
-    showFriends () {
-      this.friend = 'hover'
-      this.group = ''
-    },
-    showGroups () {
-      this.friend = ''
-      this.group = 'hover'
-    },
+		showFriends() {
+			this.friend = "hover";
+			this.group = '';
+		},
+		showGroups() {
+			this.friend = '';
+			this.group = "hover";
+		},
     newFriendList () {
       this.$router.push({path: 'contact_list/new_friends'})
     },
-    alreadyFriendsList () {
+    alreadyFriendsList(){
+      this.$loading.show();
       this.getAlreadyFriends({user_id: this.userInfo.user_id}).then(res => {
         if (res) {
-          this.alreadyFriends = res.data.alreadyFriends
+          this.$loading.hide();
+          this.alreadyFriends =  res.data.alreadyFriends
         }
       })
     },
     alreadyGroupsList () {
       this.getAlreadyGroups({user_id: this.userInfo.user_id}).then(res => {
         if (res) {
-          this.alreadyGroups = res.data.alreadyGroups
+          this.alreadyGroups =  res.data.alreadyGroups
         }
       })
     }
 
-  },
+	},
 
-  mounted () {
-    this.userInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
-    this.alreadyFriendsList()
-    this.alreadyGroupsList()
-  }
+	mounted() {
+    this.userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
+    Promise.all([this.alreadyFriendsList(),this.alreadyGroupsList()]);
+	}
 }
 </script>
 
 <style lang="scss" scoped>
+  @import "../assets/css/chat.scss";
 .wrapper {
   height: 100vh;
   min-width: 100%;
@@ -135,7 +147,7 @@ export default {
   }
 
     .list-box{
-      padding: 1.5vh 2vh;
+      padding: 0.2rem 0.15rem;
       display: flex;
       justify-items: center;
       align-items: center;
@@ -165,7 +177,8 @@ export default {
         }
         .remark {
           font-size: 0.2rem;
-          margin-left: 2vh;
+          margin-left: 0.2rem;
+          color: $gray-color;
         }
       }
     }
@@ -189,7 +202,7 @@ export default {
             font-size: 0.28rem;
             line-height: 0.5rem;
             margin-left: 0.2rem;
-            // overflow: hidden;
+            //  overflow: hidden;
         }
     }
     .tab {

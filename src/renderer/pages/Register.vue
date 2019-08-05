@@ -17,17 +17,20 @@
           </svg>
         </div>
 			</div>
-			<form>
+			<form class="register-form">
 				<div>
-          <span class="normal-word">用户名：</span><input type="text" class="fadeIn second" v-model="name" placeholder="用户名">
+          <span class="normal-word">用户名：</span><input v-focus style="line-height:normal !important;" maxlength="16" type="text" class="input-class fadeIn second" v-model="name" placeholder="用户名">
         </div>
         <div>
-          <span class="normal-word">密码：</span><input type="password" class="fadeIn third" v-model="password" placeholder="密码">
+          <span class="normal-word">密码：</span><input style="line-height:normal !important;" maxlength="24" type="password" class="input-class fadeIn third" v-model="password" placeholder="密码">
         </div>
 				<div>
-          <span class="normal-word">邮箱：</span><input type="text" class="fadeIn third" v-model="email" placeholder="邮箱">
+          <span class="normal-word">邮箱：</span><input style="line-height:normal !important;" maxlength="36" type="email" class="input-class fadeIn third" v-model="email" placeholder="邮箱">
         </div>
-				<input type="button" :disabed="disabledFlag" @click="startRegister" class="fadeIn fourth" value="注册">
+        <div class="action action-box-spe" :class="{'disabled': disabledFlag}">
+          <span  @click="startRegister" class="primary-span">注 册</span>
+        </div>
+				<!--<input type="button" :disabed="disabledFlag" @click="startRegister" class="fadeIn fourth" value="注册">-->
 			</form>
 		</div>
 	</div>
@@ -35,77 +38,78 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import { debounce, checkEmail } from '../utils/common'
+import { mapActions } from 'vuex';
+import { checkEmail } from "../utils/common"
 export default {
-  data () {
-    return {
-      name: '',
-      password: '',
+	data() {
+		return {
+			name: '',
+			password: '',
       email: '',
-      messageBox: {
-        visible: false,
-        message: '', // 弹窗内容
-        hasCancel: true, // 弹窗是否有取消键
-        messageBoxEvent: '' // 弹窗事件名称
-      },
+			messageBox: {
+				visible: false,
+				message: "", // 弹窗内容
+				hasCancel: true, // 弹窗是否有取消键
+				messageBoxEvent: "" //  弹窗事件名称
+			},
       disabledFlag: false
-    }
-  },
-  methods: {
-    ...mapActions(['register', 'activateEmail']),
-	  actualRegister () {
+		}
+	},
+	methods: {
+    ...mapActions(["register", "activateEmail"]),
+	  actualRegister() {
 	    let params = {
 	      name: this.name,
         password: this.password,
         email: this.email
       }
-      if (this.name !== '' && this.password !== '' && this.email !== '' && checkEmail(this.email)) {
+      if (this.name !== "" && this.password !== "" && this.email !== "" && checkEmail(this.email)) {
         this.register(params).then(res => {
           if (res) {
             if (res.success) {
               // 弹窗
               this.messageBox.messageBoxEvent = 'register'
-              this.messageBox.visible = true
-              this.messageBox.message = '您已注册成功'
+              this.messageBox.visible = true;
+              this.messageBox.message = res.message || "您已注册成功";
             } else {
               this.$message({
                 message: res.message,
-                type: 'error'
-              })
+                type: "error"
+              });
             }
           }
+          this.disabledFlag = false;
         }).catch(err => {
           console.log(err)
           this.$message({
             message: '服务器出错啦',
-            type: 'error'
-          })
+            type: "error"
+          });
+          this.disabledFlag = false;
         })
       } else {
-        let message
-        if (this.name === '') { message = '请输入用户名' }
-        if (this.password === '') { message = '请输入密码' }
-        if (this.email === '') { message = '请输入邮箱' }
-        if (!checkEmail(this.email)) { message = '请输入正确的邮箱' }
+        let message;
+        if (this.name === "") { message = "请输入用户名" }
+        if (this.password === "") { message = "请输入密码" }
+        if (this.email === "") { message = "请输入邮箱" }
+        if (!checkEmail(this.email)) { message = "请输入正确的邮箱" }
         this.$message({
           message: message,
-          type: 'warn'
-        })
+          type: "warn"
+        });
       }
     },
-    startRegister () {
-      this.disabledFlag = true
+    startRegister() {
+      this.disabledFlag = true;
       this.actualRegister()
-      this.disabledFlag = false
-    },
-    confirm (value) {
-      if (value === 'register') {
-        this.messageBox.visible = false
-        this.$router.push('/login')
-      }
-    }
-  }
+		},
+		confirm(value) {
+			if (value === 'register') {
+				this.messageBox.visible = false;
+				this.$router.push("/login");
+			}
+		}
+	}
 }
 </script>
 

@@ -2,30 +2,44 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>happy-chat-electron</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>happyChat乐聊 | 程新松</title>
+        <link rel="icon" href="https://chat.chengxinsong.cn/icon/happyChat.png">
+        <meta name="description" content="happyChat乐聊，完全免费，saucxs，songEagle，程新松">
+        <meta name="keywords" content="happyChat乐聊，saucxs，songEagle，程新松">
+        <!-- Add to home screen for Safari on iOS -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="happyChat">
+        <link rel="apple-touch-icon" href="https://chat.chengxinsong.cn/icon/happyChat.png">
+        <!-- for windows-->
+        <meta name="msapplication-TileImage" content="https://chat.chengxinsong.cn/icon/happyChat.png">
+        <meta name="msapplication-TileColor" content="#363941">
+
     <% if (htmlWebpackPlugin.options.nodeModules) { %>
       <!-- Add `node_modules/` to global paths so `require` works properly in development -->
       <script>
         require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
       </script>
     <% } %>
+
   </head>
   <body>
     <div id="app"></div>
 
-    <script src="http://at.alicdn.com/t/font_1083780_i6lfaa73b0i.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+       <script src="https://at.alicdn.com/t/font_1083780_i6lfaa73b0i.js"></script>
+       <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 
     <!-- Set `__static` path to static files in production -->
     <% if (!process.browser) { %>
       <script>
         if (process.env.NODE_ENV !== 'development') window.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 
-         const socketWeb = io('http://chat.chengxinsong.cn');
-         const userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"))
-         if (userInfo) {
-            socket.emit('update', userInfo.user_id);
-         }
+          const socketWeb = io('https://chat.chengxinsong.cn');
+              const userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"))
+              if (userInfo) {
+                socketWeb.emit('update', userInfo.user_id);
+              }
 
       </script>
     <% } %>

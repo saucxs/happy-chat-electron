@@ -16,11 +16,11 @@
             <span @click="goWebsite"><svg class="icon" aria-hidden="true"><use  xlink:href="#iconWorld-WideWeb"></use></svg></span>
           </p>
           <p class="user-intro">{{userInfo.intro == null ? '没有留下介绍~': userInfo.intro}}</p>
-          <p class="user-more" @click="goInfo"><svg class="icon" aria-hidden="true"> <use  xlink:href="#iconacmore"></use></svg>更多信息</p>
+          <p class="user-more"><span @click="goInfo"><svg class="icon" aria-hidden="true"><use  xlink:href="#iconacmore"></use></svg>更多信息</span></p>
         </div>
       </div>
-      <div class="action" @click="logout">
-        <span class="logout">退出登录</span>
+      <div class="action">
+        <span @click="logout" class="warning-span">退出登录</span>
       </div>
     </div>
   </div>
@@ -32,77 +32,77 @@
 import Header from '../components/Header.vue'
 import Footer from '../components/Footer.vue'
 export default {
-  name: 'message',
-  data () {
-    return {
-      currentTab: 4,
-      messageBox: {
-        visible: false,
-        message: '', // 弹窗内容
-        hasCancel: true, // 弹窗是否有取消键
-        messageBoxEvent: '' // 弹窗事件名称
-      },
-      userInfo: {}
-    }
-  },
-  components: {
-    Header,
-    Footer
-  },
-  methods: {
-    goInfo () {
-      const path = `/user_info/${this.userInfo.user_id}`
-      this.$router.push(path)
-    },
-    logout () {
-      console.log(this.messageBox, '00000000000000000000000000')
-      this.messageBox.messageBoxEvent = 'logOut'
-      this.messageBox.visible = true
-      this.messageBox.message = '确定退出？'
-    },
-    cancel (value) {
-      this.messageBox.visible = false
-    },
-    confirm (value) {
-      if (value === 'logOut') {
-        // 登出
+	name: 'message',
+	data() {
+		return {
+			currentTab: 4,
+			messageBox: {
+				visible: false,
+				message: "", // 弹窗内容
+				hasCancel: true, // 弹窗是否有取消键
+				messageBoxEvent: "" // 弹窗事件名称
+			},
+			userInfo: {}
+		}
+	},
+	components: {
+		Header,
+		Footer
+	},
+	methods: {
+		goInfo() {
+			const path = `/user_info/${this.userInfo.user_id}`;
+			this.$router.push(path)
+		},
+		logout() {
+			this.messageBox.messageBoxEvent = 'logOut'
+			this.messageBox.visible = true;
+			this.messageBox.message = "确定退出？"
+		},
+		cancel(value) {
+			this.messageBox.visible = false;
+		},
+		confirm(value) {
+			if (value === 'logOut') {
+        this.$store.commit('firstLoadMutation', true)
+				// 登出
         socketWeb.emit('logout', this.userInfo.user_id)
-        localStorage.removeItem('HappyChatUserToken')
-        localStorage.removeItem('HappyChatUserInfo')
-        let self = this
-        setTimeout(function () {
-          self.$router.push({
-            path: '/login'
-          })
-        }, 1000)
-      }
-    },
+				localStorage.removeItem("HappyChatUserToken");
+        localStorage.removeItem("HappyChatUserInfo");
+				let self = this;
+				setTimeout(function() {
+					self.$router.push({
+						path: "/login"
+					});
+				}, 1000);
+			}
+		},
     // 点击跳转到对方的gihub
-    goGithub () {
+    goGithub() {
       if (this.userInfo.github) {
-        window.location.href = this.userInfo.github
+        window.location.href = this.userInfo.github;
       } else {
         this.$message({
           message: '对方尚未放他的github链接哦',
-          type: 'error'
-        })
+          type: "warn"
+        });
       }
     },
     // 点击跳转到对方的网站
-    goWebsite () {
+    goWebsite() {
       if (this.userInfo.website) {
-        window.location.href = this.userInfo.website
+        window.location.href = this.userInfo.website;
       } else {
         this.$message({
           message: '对方尚未放他的网站链接哦',
-          type: 'error'
-        })
+          type: "warn"
+        });
       }
     }
-  },
-  mounted () {
-    this.userInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
-  }
+	},
+	mounted() {
+		this.userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
+	}
 }
 </script>
 
@@ -112,7 +112,7 @@ export default {
       margin-top: 1rem;
       .content-box{
         text-align: center;
-        line-height: 1.2rem;
+        line-height: 1rem;
         img {
           width: 2rem;
           height: 2rem;
@@ -141,12 +141,6 @@ export default {
           text-decoration: solid;
         }
       }
-    }
-    .action {
-        .logout {
-            background-color: #4290F7;
-            color: #fff;
-        }
     }
 }
 </style>

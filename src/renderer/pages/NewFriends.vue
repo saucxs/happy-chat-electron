@@ -1,7 +1,7 @@
 <template>
 <div class="wrapper">
 	<Header goback='true' chatTitle="新好友通知"></Header>
-  <div class="chat-wrapper">
+  <div class="chat-wrapper-no-footer">
     <div class="secret-box">
       <ul>
         <li v-for="data in newFriendGetter">
@@ -26,80 +26,81 @@
 
 <script>
 import Header from '../components/Header.vue'
-import axios from 'axios'
-import { mapGetters, mapActions } from 'vuex'
-import { toNomalTime } from '../utils/common'
+import axios from "axios"
+import { mapGetters, mapActions } from 'vuex';
+import { toNomalTime } from "../utils/common"
 export default {
-  components: {
-    Header
-  },
+	components: {
+		Header
+	},
 
-  data () {
-    return {
-      userInfo: {},
-      time: ''
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'newFriendGetter'
-    ])
-  },
+	data() {
+		return {
+			userInfo: {},
+			time: ""
+		}
+	},
+	computed: {
+		...mapGetters([
+			'newFriendGetter'
+		])
+	},
 
-  watch: {},
+	watch: {},
 
-  methods: {
-    ...mapActions(['getNewFriends', 'beFriends', 'updateNewFriendsState']),
-    enterIt (val) {
-      this.$router.push(`/user_info/${val}`)
-    },
-    // 同意加好友
-    async agreeBeFriend (val) {
-      this.beFriends({
+	methods: {
+    ...mapActions(["getNewFriends","beFriends","updateNewFriendsState"]),
+		enterIt(val) {
+			this.$router.push(`/user_info/${val}`)
+		},
+		// 同意加好友
+		async agreeBeFriend(val) {
+			this.beFriends({
         other_user_id: val,
         time: toNomalTime((new Date()).getTime()) // 时间
       })
-      this.updateNewFriends(val)
-    },
-    // 更新验证状态
-    async updateNewFriends (val) {
+      this.updateNewFriends(val);
+		},
+		// 更新验证状态
+		async updateNewFriends(val) {
       this.updateNewFriendsState({ from_user: val })
-      let data = {}
-      this.newFriendGetter.forEach((ele) => {
-        if (ele.from_user == val) {
-          ele.status = 1
-          data = {
-            avator: ele.avator, // 加我的人的头像
-            id: val, // 加我的人的id
-            other_user_id: val,
-            message: '我们已成为好友，开始聊天吧！',
-            time: toNomalTime((new Date()).getTime()), // 时间
-            name: ele.name, // 加我的人的名字
-            type: 'private',
-            action: 'push'
-          }
-        }
-      })
-      this.$store.commit('updateListMutation', data)
-      const data2 = {
-        from_user: this.userInfo.user_id, // 自己的id
-        to_user: val,
-        name: this.userInfo.name, // 自己的昵称
-        avator: this.userInfo.avator, // 自己的头像
-        message: data.message, // 消息内容
-        type: 'private',
-        action: 'request',
-        status: '1', // 是否在线 0为不在线 1为在线
-        time: toNomalTime((new Date()).getTime()) // 时间
-      }
-      socketWeb.emit('sendPrivateMsg', data2) // 让对方的信息列表也可以显示添加成功的信息
-    }
-  },
-  created () {
-    this.userInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
-    this.$store.commit('friendReqTipsMutation', false)
-    this.getNewFriends({user_id: this.userInfo.user_id})
-  }
+			let data = {};
+			this.newFriendGetter.forEach((ele) => {
+				if (ele.from_user == val) {
+					ele.status = 1;
+					data = {
+						avator: ele.avator, // 加我的人的头像
+						id: val, // 加我的人的id
+						other_user_id: val,
+						message: "我们已成为好友，开始聊天吧！",
+						time: toNomalTime((new Date()).getTime()), // 时间
+						name: ele.name, // 加我的人的名字
+						type: "private",
+						action: "push"
+					}
+				}
+			})
+			this.$store.commit('updateListMutation', data)
+			const data2 = {
+				from_user: this.userInfo.user_id, // 自己的id
+				to_user: val,
+				name: this.userInfo.name, // 自己的昵称
+				avator: this.userInfo.avator, // 自己的头像
+				message: data.message, // 消息内容
+				type: 'private',
+				action: "request",
+				status: '1', // 是否在线 0为不在线 1为在线
+				time: toNomalTime((new Date()).getTime()) // 时间
+			};
+      socketWeb.emit('sendPrivateMsg', data2); // 让对方的信息列表也可以显示添加成功的信息
+
+		}
+	},
+	created() {
+		this.userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
+    this.$store.commit('friendReqTipsMutation', false);
+    this.getNewFriends({user_id: this.userInfo.user_id});
+	}
 }
 </script>
 
@@ -158,7 +159,7 @@ export default {
                     font-size: 0.2rem;
                     position: absolute;
                     right: 0.3rem;
-                    // top: 0;
+                    //  top: 0;
                     top: 50%;
                     transform: translateY(-50%);
                 }

@@ -4,7 +4,7 @@
     <Header :currentTab="currentTab"></Header>
     <div class="chat-wrapper">
       <div class="secret-box">
-        <ul>
+        <ul ref="viewBox">
           <li v-for="msg in robotMsgGetter">
             <ChatItem v-if="msg.user" :msg="msg.message" :name="msg.user" :time="time"></ChatItem>
             <ChatItem v-if="!msg.user" me="true" :name="name" :href="href" :img=img :msg="msg.message" :time="time"></ChatItem>
@@ -14,8 +14,8 @@
     </div>
 
     <div class="input-msg">
-      <textarea v-model="inputMsg" @keydown.enter.prevent="sendMessage" ref="message"></textarea>
-      <p class="btn" :class="{'enable':inputMsg!=''}" @click="sendMessage">发送</p>
+      <textarea v-focus v-model="inputMsg" @keydown.enter.prevent="sendMessage(inputMsg)" ref="message"></textarea>
+      <p class="btn" :class="{'enable':inputMsg!=''}" @click="sendMessage(inputMsg)">发送</p>
     </div>
     <Footer :currentTab="currentTab"></Footer>
   </div>
@@ -25,63 +25,69 @@
   import Header from '../components/Header.vue'
   import Footer from '../components/Footer.vue'
   import ChatItem from '../components/ChatItem.vue'
-  import axios from 'axios'
-import { mapGetters, mapActions } from 'vuex'
-import {toNomalTime} from '../utils/common'
-export default {
-  name: 'Robot',
-  data () {
+  import { mapGetters, mapActions } from 'vuex';
+  import  { toNomalTime } from "../utils/common"
+  export default {
+    name: 'Robot',
+    data () {
       return {
         currentTab: 2,
-        inputMsg: '',
+        inputMsg: "",
         time: toNomalTime((new Date()).getTime()),
-        img: '',
+        img: "",
         isScrollToBottom: true,
         name: '',
-        href: ''
+        href: '',
+        viewBox: '',
       }
-  },
-  components: {
+    },
+    components: {
       Header,
       Footer,
       ChatItem
-  },
-  methods: {
-      ...mapActions(['chatRobot']),
-      async sendMessage () {
-        if (this.inputMsg.trim() == '') return
+    },
+    methods: {
+      ...mapActions(["chatRobot"]),
+      async sendMessage(val) {
+        this.inputMsg = '';
+        if (val.trim() == '') return;
         this.$store.commit('robotMsgMutation', { // 提交自己的内容
-          message: this.inputMsg
+          message: val
         })
         let data = {
-          message: this.inputMsg
+          message: val,
+          userId: this.userInfoDataGetter.user_id,
         }
-        await this.chatRobot(data)
-        this.inputMsg = ''
-  },
-      refresh () {
+        await this.chatRobot(data);
+        this.refresh();
+      },
+      refresh() {
+        this.viewBox = this.$refs.viewBox;
         setTimeout(() => {
-          window.scrollTo(0, document.body.scrollHeight + 10000)
-        }, 0)
+          this.viewBox.scrollTop = this.viewBox.scrollHeight;
+        }, 4)
       }
-  },
-  watch: {
-      robotMsgGetter () { // 当数据改变了,则自动刷新
-        this.refresh()
-  }
-  },
-  computed: {
-  ...mapGetters([
-        'robotMsgGetter'
+    },
+    watch: {
+      robotMsgGetter() { // 当数据改变了,则自动刷新
+        this.refresh();
+        let message = this.$refs.message;
+        message.focus();
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'robotMsgGetter',
+        'userInfoDataGetter'
       ])
-  },
-  created () {
-      const userInfo = JSON.parse(localStorage.getItem('HappyChatUserInfo'))
-  this.img = userInfo.avator
-  this.name = userInfo.name
-  this.href = userInfo.user_id
+    },
+    created() {
+      const userInfo = JSON.parse(localStorage.getItem("HappyChatUserInfo"));
+      this.img = userInfo.avator;
+      this.name = userInfo.name;
+      this.href = userInfo.user_id
+    },
   }
-}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -112,7 +118,7 @@ export default {
      display: flex;
      flex-direction: column;
      width: 100%;
-     padding-bottom: 1.6rem;
+     padding-bottom: 0.8rem;
     li{
       list-style-type: none;
     }
@@ -120,13 +126,14 @@ export default {
   .input-msg {
     height: 0.76rem;
     position: fixed;
-    bottom: 1rem;
+    bottom: 0.95rem;
     display: flex;
     width: 100%;
     z-index: 999;
     textarea {
       width: 80%;
-      padding: 0.05rem 0.1rem;
+      height: 100%;
+      padding: 0.06rem 0.1rem;
       border-radius: 0.02rem;
       outline: none;
       resize: none;
@@ -140,7 +147,6 @@ export default {
       align-items: center;
       justify-content: center;
       text-align: center;
-      margin-right: 0.06rem;
       height: 100%;
       width: 20%;
       background: #ccc;
